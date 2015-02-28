@@ -73,7 +73,7 @@ class DnsMonitor
 
       if hostnames = @hosts.fetch(device.mac, nil)
         hostnames = [hostnames] unless hostnames.is_a? Array
-        device.hostnames |= hostnames
+        device.hostnames = hostnames | device.hostnames
       end
       device
     end
