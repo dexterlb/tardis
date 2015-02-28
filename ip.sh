@@ -1,14 +1,13 @@
 #!/bin/zsh
 dir="$(dirname "${0}")"
 . "${dir}/common.sh"
+. "${dir}/ip_config.sh"
 if [[ -z $(fmdate '%Y%m%d') ]]; then
     # assertion failed
     exit 1
 fi
 
-logfile="/home/human/log/ip/$(fmdate '%Y%m%d').log"
-url='http://freedns.afraid.org/dynamic/update.php?U3FlcXJrTVRTTUlBQUVXMmY0MDoxMzY0ODM1NQ=='
-# url='http://freedns.afraid.org/dynamic/update.php?U3FlcXJrTVRTTUlBQUVXMmY0MDo3MzM1MTkz'
+# logfile="/home/human/log/ip/$(fmdate '%Y%m%d').log"
 match_ok='^ERROR\: Address ([0-9.]+) has not changed\.'
 match_new='Updated [0-9]+ host\(s\) .+ to ([0-9.]+) in [0-9]+\.[0-9]+ seconds'
 
