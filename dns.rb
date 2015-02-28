@@ -90,10 +90,6 @@ class DnsMonitor
     end
   end
 
-  def router_url
-    "http://#{@router_user}:#{@router_password}@#{@router_host}"
-  end
-
   def get_devices
     expr = %r{
       <td>(?<host>[^\s]*)\s*</td>
@@ -103,12 +99,16 @@ class DnsMonitor
       <td>(?<mac>([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))\s*</td>
     }x
 
+    raw_host_data.gsub(/[\r\n]/, '').named_scan(expr).map do |host_data|
+      OpenStruct.new(host_data)
+    end
+  end
+
+  def raw_host_data
     open("http://#{@router_host}/DHCPTable.htm",
          http_basic_authentication: [@router_user,
                                      @router_password]) do |request|
       request.read
-    end.gsub(/[\r\n]/, '').named_scan(expr).map do |host_data|
-      OpenStruct.new(host_data)
     end
   end
 
