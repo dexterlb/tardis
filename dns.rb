@@ -54,12 +54,12 @@ class DnsMonitor
   end
 
   def devices_added(devices)
-    p "New IPs: ", devices
+    puts 'New devices: ' + devices.map(&:mac).join(' ')
     Media.play('media/tardis_on.wav')
   end
 
   def devices_removed(devices)
-    p "Gone IPs: ", devices
+    puts 'Disconnected devices: ' + devices.map(&:mac).join(' ')
   end
 
   def update_hostnames(devices)
