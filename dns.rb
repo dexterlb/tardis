@@ -131,7 +131,7 @@ class Loop
 
   def run
     loop do
-      sleep 1
+      sleep 2.5
       @monitor.update
     end
   end
