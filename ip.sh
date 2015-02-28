@@ -7,7 +7,7 @@ if [[ -z $(fmdate '%Y%m%d') ]]; then
     exit 1
 fi
 
-# logfile="/home/human/log/ip/$(fmdate '%Y%m%d').log"
+logfile="/home/human/log/ip/$(fmdate '%Y%m%d').log"
 match_ok='^ERROR\: Address ([0-9.]+) has not changed\.'
 match_new='Updated [0-9]+ host\(s\) .+ to ([0-9.]+) in [0-9]+\.[0-9]+ seconds'
 
