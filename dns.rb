@@ -2,6 +2,7 @@
 
 require 'open-uri'
 require 'ostruct'
+require 'yaml'
 
 class String
   def named_scan(regexp)
@@ -12,12 +13,21 @@ class String
   end
 end
 
+class Media
+  def self.play(wav_file)
+    IO.popen([
+      'aplay', File.dirname(__FILE__) + '/' + wav_file,
+      err: [:child, :out]
+    ]).readlines
+  end
+end
+
 class DnsMonitor
-  def initialize(router_host: 'router',
-                 router_user: 'admin',
-                 router_password: 'password',
-                 hosts: {},
-                 hosts_file: nil)
+  def initialize(router_host:,
+                 router_user:,
+                 router_password:,
+                 hosts:,
+                 hosts_file:)
     @router_host = router_host
     @router_user = router_user
     @router_password = router_password
@@ -40,10 +50,12 @@ class DnsMonitor
 
     @devices = new_devices
     save_hosts(update_hostnames(@devices))
+    reload_dns
   end
 
   def devices_added(devices)
     p "New IPs: ", devices
+    Media.play('media/tardis_on.wav')
   end
 
   def devices_removed(devices)
@@ -99,6 +111,32 @@ class DnsMonitor
       OpenStruct.new(host_data)
     end
   end
+
+  def reload_dns
+    system('reload_dns')
+  end
 end
+
+class Loop
+  def initialize(config_file)
+    config = YAML.load(File.read(config_file))
+    @monitor = DnsMonitor.new(
+      router_host: config['router_host'],
+      router_user: config['router_user'],
+      router_password: config['router_password'],
+      hosts: config['hosts'],
+      hosts_file: config['hosts_file']
+    )
+  end
+
+  def run
+    loop do
+      sleep 1
+      @monitor.update
+    end
+  end
+end
+
+Loop.new(File.dirname(__FILE__) + '/tardis.conf').run
 
 # vim: set shiftwidth=2:
