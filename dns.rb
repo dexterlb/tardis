@@ -42,23 +42,23 @@ class DnsMonitor
     new_devices = get_devices
     return if new_devices == @devices
 
-    added_devices = new_devices - @devices
-    devices_added(added_devices) unless added_devices.empty?
+    save_hosts(update_hostnames(new_devices))
+    reload_dns
 
-    removed_devices = @devices - new_devices
-    devices_removed(removed_devices) unless removed_devices.empty?
+    devices_added(new_devices - @devices)
+    devices_removed(@devices - new_devices)
 
     @devices = new_devices
-    save_hosts(update_hostnames(@devices))
-    reload_dns
   end
 
   def devices_added(devices)
+    return if devices.empty?
     puts 'New devices: ' + devices.map(&:mac).join(' ')
     Media.play('media/tardis_on.wav')
   end
 
   def devices_removed(devices)
+    return if devices.empty?
     puts 'Disconnected devices: ' + devices.map(&:mac).join(' ')
   end
 
