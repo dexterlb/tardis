@@ -15,10 +15,14 @@ end
 
 class Media
   def self.play(wav_file)
+    system('aplay ' + File.dirname(__FILE__) + '/' + wav_file + ' &> /dev/null')
+    # FIXME must do this with popen, but for some reason it forks zombie threads
+=begin
     IO.popen([
       'aplay', File.dirname(__FILE__) + '/' + wav_file,
       err: [:child, :out]
     ]).readlines
+=end
   end
 end
 
