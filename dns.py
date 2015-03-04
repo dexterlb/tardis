@@ -42,7 +42,7 @@ class DnsMonitor:
         if not devices:
             return
         print("connected: ", devices)
-        os.system('woosh')
+        os.system('woosh 1')
 
     def disconnected(self, devices):
         if not devices:
