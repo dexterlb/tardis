@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import yaml
 import urllib.request
 import base64
@@ -106,3 +108,5 @@ class Loop:
         while True:
             self.monitor.update()
             sleep(2)
+
+Loop(os.path.join(CURRENT_DIR, 'tardis.conf')).run()
