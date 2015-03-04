@@ -2,6 +2,13 @@ import yaml
 import urllib.request
 import base64
 import re
+import os
+from collections import namedtuple
+from time import sleep
+
+CURRENT_DIR = os.path.dirname(__file__)
+
+Device = namedtuple('Device', ['ip', 'mac', 'host'])
 
 class DnsMonitor:
     def __init__(self,
@@ -19,7 +26,7 @@ class DnsMonitor:
         self.hosts = hosts
         self.hosts_file = hosts_file
 
-        self.devices = []
+        self._devices = set()
 
         self.ip_pattern = re.compile(r'''
             <td>(?P<host>[^\s]*)\s*<\/td>
@@ -30,16 +37,16 @@ class DnsMonitor:
         ''', re.VERBOSE)
 
     def update(self):
-        new_devices = get_devices
-        if new_devices == devices:
+        new_devices = self.get_devices()
+        if new_devices == self._devices:
             return
 
-        # save_hosts(update_hostnames(new_devices))
+        self.save_hosts(new_devices)
 
-        devices_added(new_devices - self.devices)
-        devices_removed(self.devices - new_devices)
+        self.devices_added(new_devices - self._devices)
+        self.devices_removed(self._devices - new_devices)
 
-        self.devices = new_devices
+        self._devices = new_devices
 
     def devices_added(self, devices):
         if not devices:
@@ -50,13 +57,33 @@ class DnsMonitor:
         if not devices:
             return
         print("disconnected: ", devices)
+    
+    def save_hosts(self, devices):
+        if not self.hosts_file:
+            return
+        with open(self.hosts_file, 'w') as f:
+            for device in devices:
+                hostnames = self.hostnames(device)
+                if hostnames:
+                    f.write(device.ip + ' ' + ' '.join(hostnames) + '\n')
+
+    def hostnames(self, device):
+        hostnames = self.hosts.get(device.mac, [])
+        if type(hostnames) is not list:
+            hostnames = [hostnames]
+
+        if re.match(r'^[a-zA-Z0-9\-]+$', device.host):
+            if device.host not in hostnames:
+                hostnames.append(device.host) 
+
+        return hostnames
 
     def get_devices(self):
         data_string = re.sub(r'[\r\n]', '', self.raw_host_data().decode())
         devices = []
         for match in re.finditer(self.ip_pattern, data_string):
-            devices.append(match.groupdict())
-        return devices
+            devices.append(Device(**match.groupdict()))
+        return set(devices)
 
     def raw_host_data(self):
         return urllib.request.urlopen(self.request).read()
@@ -72,3 +99,8 @@ class Loop:
             hosts = config['hosts'],
             hosts_file = config['hosts_file']
         )
+
+    def run(self):
+        while True:
+            self.monitor.update()
+            sleep(2)
