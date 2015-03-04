@@ -36,27 +36,29 @@ class DnsMonitor:
             <td>(?P<mac>([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))\s*<\/td>
         ''', re.VERBOSE)
 
+    def connected(self, devices):
+        if not devices:
+            return
+        print("connected: ", devices)
+        os.system('woosh')
+
+    def disconnected(self, devices):
+        if not devices:
+            return
+        print("disconnected: ", devices)
+
     def update(self):
         new_devices = self.get_devices()
         if new_devices == self._devices:
             return
 
         self.save_hosts(new_devices)
+        os.system('reload_dns')
 
-        self.devices_added(new_devices - self._devices)
-        self.devices_removed(self._devices - new_devices)
+        self.connected(new_devices - self._devices)
+        self.disconnected(self._devices - new_devices)
 
         self._devices = new_devices
-
-    def devices_added(self, devices):
-        if not devices:
-            return
-        print("connected: ", devices)
-
-    def devices_removed(self, devices):
-        if not devices:
-            return
-        print("disconnected: ", devices)
     
     def save_hosts(self, devices):
         if not self.hosts_file:
