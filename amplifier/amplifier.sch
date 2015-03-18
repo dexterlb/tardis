@@ -1,0 +1,194 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:special
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:amplifier-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L CONN_01X02 P?
+U 1 1 5508A3D2
+P 1050 1100
+F 0 "P?" H 1050 1250 50  0000 C CNN
+F 1 "CONN_01X02" H 1150 950 50  0000 C CNN
+F 2 "" H 1050 1100 60  0000 C CNN
+F 3 "" H 1050 1100 60  0000 C CNN
+	1    1050 1100
+	-1   0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5508A8E1
+P 1300 1600
+F 0 "#PWR?" H 1300 1350 60  0001 C CNN
+F 1 "GND" H 1300 1450 60  0000 C CNN
+F 2 "" H 1300 1600 60  0000 C CNN
+F 3 "" H 1300 1600 60  0000 C CNN
+	1    1300 1600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1250 1150 1300 1150
+Wire Wire Line
+	1300 1150 1300 1600
+$Comp
+L C C?
+U 1 1 5508A99C
+P 3900 2950
+F 0 "C?" H 3900 3050 40  0000 L CNN
+F 1 "1n" H 3906 2865 40  0000 L CNN
+F 2 "" H 3938 2800 30  0000 C CNN
+F 3 "" H 3900 2950 60  0000 C CNN
+	1    3900 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L INDUCTOR_SMALL L?
+U 1 1 5508A9D9
+P 2550 2650
+F 0 "L?" H 2550 2750 50  0000 C CNN
+F 1 "INDUCTOR_SMALL" H 2550 2600 50  0000 C CNN
+F 2 "" H 2550 2650 60  0000 C CNN
+F 3 "" H 2550 2650 60  0000 C CNN
+	1    2550 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C?
+U 1 1 5508AA13
+P 3000 2950
+F 0 "C?" H 3000 3050 40  0000 L CNN
+F 1 "100n" H 3006 2865 40  0000 L CNN
+F 2 "" H 3038 2800 30  0000 C CNN
+F 3 "" H 3000 2950 60  0000 C CNN
+	1    3000 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L INDUCTOR_SMALL L?
+U 1 1 5508AA61
+P 3450 2650
+F 0 "L?" H 3450 2750 50  0000 C CNN
+F 1 "INDUCTOR_SMALL" H 3450 2600 50  0000 C CNN
+F 2 "" H 3450 2650 60  0000 C CNN
+F 3 "" H 3450 2650 60  0000 C CNN
+	1    3450 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L CP2 C?
+U 1 1 5508AD94
+P 2100 2950
+F 0 "C?" H 2100 3050 40  0000 L CNN
+F 1 "1000u" H 2106 2865 40  0000 L CNN
+F 2 "" H 2138 2800 30  0000 C CNN
+F 3 "" H 2100 2950 60  0000 C CNN
+	1    2100 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5508AE0E
+P 2100 3200
+F 0 "#PWR?" H 2100 2950 60  0001 C CNN
+F 1 "GND" H 2100 3050 60  0000 C CNN
+F 2 "" H 2100 3200 60  0000 C CNN
+F 3 "" H 2100 3200 60  0000 C CNN
+	1    2100 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5508AE1F
+P 3000 3200
+F 0 "#PWR?" H 3000 2950 60  0001 C CNN
+F 1 "GND" H 3000 3050 60  0000 C CNN
+F 2 "" H 3000 3200 60  0000 C CNN
+F 3 "" H 3000 3200 60  0000 C CNN
+	1    3000 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5508AE30
+P 3900 3200
+F 0 "#PWR?" H 3900 2950 60  0001 C CNN
+F 1 "GND" H 3900 3050 60  0000 C CNN
+F 2 "" H 3900 3200 60  0000 C CNN
+F 3 "" H 3900 3200 60  0000 C CNN
+	1    3900 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3900 3200 3900 3150
+Wire Wire Line
+	2800 2650 3200 2650
+Wire Wire Line
+	3000 2750 3000 2650
+Connection ~ 3000 2650
+Wire Wire Line
+	3700 2650 3900 2650
+Wire Wire Line
+	3900 2650 3900 2750
+$Comp
+L LM386 U?
+U 1 1 5508B54C
+P 4950 3850
+F 0 "U?" H 5100 4050 60  0000 C CNN
+F 1 "LM386" H 5100 4150 60  0000 C CNN
+F 2 "" H 4950 3850 60  0000 C CNN
+F 3 "" H 4950 3850 60  0000 C CNN
+	1    4950 3850
+	1    0    0    1   
+$EndComp
+$Comp
+L CP2 C?
+U 1 1 55095397
+P 5550 2850
+F 0 "C?" H 5550 2950 40  0000 L CNN
+F 1 "1000u" H 5556 2765 40  0000 L CNN
+F 2 "" H 5588 2700 30  0000 C CNN
+F 3 "" H 5550 2850 60  0000 C CNN
+	1    5550 2850
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
