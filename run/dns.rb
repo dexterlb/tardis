@@ -4,120 +4,89 @@ require 'open-uri'
 require 'ostruct'
 require 'yaml'
 
-class String
-  def named_scan(regexp)
-    names = regexp.names
-    scan(regexp).collect do |match|
-      Hash[names.zip(match)]
-    end
-  end
-end
-
-class Media
-  def self.play(wav_file)
-    system('aplay ' + File.dirname(__FILE__) + '/' + wav_file + ' &> /dev/null')
-    # FIXME must do this with popen, but for some reason it forks zombie threads
-=begin
-    IO.popen([
-      'aplay', File.dirname(__FILE__) + '/' + wav_file,
-      err: [:child, :out]
-    ]).readlines
-=end
-  end
-end
-
 class DnsMonitor
-  def initialize(router_host:,
-                 router_user:,
-                 router_password:,
-                 hosts:,
-                 hosts_file:)
-    @router_host = router_host
-    @router_user = router_user
-    @router_password = router_password
+  def initialize(router_host:, router_user:, router_password:,
+                 hosts:, hosts_file:)
+    @table_url = "http://#{router_host}/DHCPTable.htm"
+    @router_auth = [router_user, router_password]
 
     @hosts = hosts
     @hosts_file = hosts_file
 
     @devices = []
+
+    @table_parse_regex = %r{
+      <td>(?<hostname>[^\s]*)\s*</td>
+      \s*
+      <td>(?<ip>([0-9]+\.){3}[0-9]+)\s*</td>
+      \s*
+      <td>(?<mac>([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))\s*</td>
+    }x
+  end
+
+  def connected(devices)
+    return if devices.empty?
+    puts 'connected: ' + devices.map(&:mac).join(', ')
+    system('woosh 1 &')
+  end
+
+  def disconnected(devices)
+    return if devices.empty?
+    puts 'disconnected: ' + devices.map(&:mac).join(', ')
   end
 
   def update
     new_devices = get_devices
     return if new_devices == @devices
 
-    save_hosts(update_hostnames(new_devices))
-    reload_dns
-
-    devices_added(new_devices - @devices)
-    devices_removed(@devices - new_devices)
+    connected(new_devices - @devices)
+    disconnected(@devices - new_devices)
 
     @devices = new_devices
+
+    save_hosts_file
+    system('reload_dns')
   end
 
-  def devices_added(devices)
-    return if devices.empty?
-    puts 'New devices: ' + devices.map(&:mac).join(' ')
-    Media.play('media/tardis_on.wav')
-  end
-
-  def devices_removed(devices)
-    return if devices.empty?
-    puts 'Disconnected devices: ' + devices.map(&:mac).join(' ')
-  end
-
-  def update_hostnames(devices)
-    devices.map do |device|
-      device = device.dup
-      if device.host =~ /[a-zA-Z0-9\-]+/
-        device.hostnames = [device.host]
-      else
-        device.hostnames = []
-      end
-
-      if hostnames = @hosts.fetch(device.mac, nil)
-        hostnames = [hostnames] unless hostnames.is_a? Array
-        device.hostnames = hostnames | device.hostnames
-      end
-      device
-    end
-  end
-
-  def save_hosts(devices)
+  def save_hosts_file
+    # write a hosts file for all current devices
+    # each line of the file has: <ip> <hostname1> <hostname2> ...
     return unless @hosts_file
     File.open(@hosts_file, 'w') do |file|
-      devices.each do |device|
-        unless device.hostnames.empty?
-          file.write(device.ip + ' ' + device.hostnames.join(' ') + "\n")
-        end
+      @devices.each do |device|
+        file.puts(device.ip + ' ' + hostnames(device).join(' '))
       end
     end
+  end
+
+  def hostnames(device)
+    # get a list of all hostnames of a device:
+    # all hostnames for its mac from @hosts and its original hostname
+    hostnames = @hosts.fetch(device.mac, [])
+    unless hostnames.is_a? Array
+      hostnames = [hostnames]   # if it's a single hostname it might be a string
+    end
+
+    if /^[a-zA-Z0-9\-]+$/.match(device.hostname)
+      hostnames << device.hostname unless hostnames.include? device.hostname
+    end
+
+    hostnames
   end
 
   def get_devices
-    expr = %r{
-      <td>(?<host>[^\s]*)\s*</td>
-      \s*
-      <td>(?<ip>([0-9]+\.){3}[0-9]+)\s*</td>
-      \s*
-      <td>(?<mac>([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))\s*</td>
-    }x
-
-    raw_host_data.gsub(/[\r\n]/, '').named_scan(expr).map do |host_data|
-      OpenStruct.new(host_data)
+    html_string = raw_host_data.gsub(/[\r\n]/, '')  # remove newlines
+    html_string.scan(@table_parse_regex).map do |device_variables|
+      # device_variables == ['some_hostname', 'some_ip', 'some_mac']
+      OpenStruct.new(Hash[@table_parse_regex.names.zip(device_variables)])
     end
   end
 
   def raw_host_data
-    open("http://#{@router_host}/DHCPTable.htm",
-         http_basic_authentication: [@router_user,
-                                     @router_password]) do |request|
+    # download the html page as string
+    open(@table_url, http_basic_authentication: @router_auth) do |request|
       request.read
     end
-  end
-
-  def reload_dns
-    system('reload_dns')
   end
 end
 
@@ -141,6 +110,8 @@ class Loop
   end
 end
 
-Loop.new(File.dirname(__FILE__) + '/tardis.conf').run
+if __FILE__ == $0   # running script with "ruby foo.rb", not with irb/pry
+  Loop.new(File.dirname(__FILE__) + '/tardis.conf').run
+end
 
 # vim: set shiftwidth=2:
