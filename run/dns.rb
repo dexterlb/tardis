@@ -1,10 +1,19 @@
 #!/usr/bin/env ruby
 
 require 'open-uri'
-require 'ostruct'
 require 'yaml'
 
 class DnsMonitor
+  DEVICE_PARSE_REGEX = %r{
+    <td>([^\s]*)\s*</td>
+    \s*
+    <td>((?:[0-9]+\.){3}[0-9]+)\s*</td>
+    \s*
+    <td>((?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2}))\s*</td>
+  }x
+
+  Device = Struct.new(:hostname, :ip, :mac)
+
   def initialize(router_host:, router_user:, router_password:,
                  hosts:, hosts_file:)
     @table_url = "http://#{router_host}/DHCPTable.htm"
@@ -14,14 +23,6 @@ class DnsMonitor
     @hosts_file = hosts_file
 
     @devices = []
-
-    @table_parse_regex = %r{
-      <td>(?<hostname>[^\s]*)\s*</td>
-      \s*
-      <td>(?<ip>([0-9]+\.){3}[0-9]+)\s*</td>
-      \s*
-      <td>(?<mac>([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))\s*</td>
-    }x
   end
 
   def connected(devices)
@@ -76,9 +77,8 @@ class DnsMonitor
 
   def get_devices
     html_string = raw_host_data.gsub(/[\r\n]/, '')  # remove newlines
-    html_string.scan(@table_parse_regex).map do |device_variables|
-      # device_variables == ['some_hostname', 'some_ip', 'some_mac']
-      OpenStruct.new(Hash[@table_parse_regex.names.zip(device_variables)])
+    html_string.scan(DEVICE_PARSE_REGEX).map do |device_variables|
+      Device.new(*device_variables)
     end
   end
 
