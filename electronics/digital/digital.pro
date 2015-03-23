@@ -1,4 +1,4 @@
-update=Sun 22 Mar 2015 12:32:42 AM EET
+update=Mon 23 Mar 2015 05:20:44 PM EET
 version=1
 last_client=kicad
 [pcbnew]
@@ -60,3 +60,4 @@ LibName28=atmel
 LibName29=contrib
 LibName30=valves
 LibName31=crystal_s
+LibName32=usb
