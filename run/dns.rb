@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'open-uri'
 require 'yaml'
+require 'net/http'
 
 class DnsMonitor
   DEVICE_PARSE_REGEX = %r{
@@ -16,8 +16,9 @@ class DnsMonitor
 
   def initialize(router_host:, router_user:, router_password:,
                  hosts:, hosts_file:)
-    @table_url = "http://#{router_host}/DHCPTable.htm"
-    @router_auth = [router_user, router_password]
+    @table_url = URI("http://#{router_host}/DHCPTable.htm")
+    @table_request = Net::HTTP::Get.new(@table_url)
+    @table_request.basic_auth(router_user, router_password)
 
     @hosts = hosts
     @hosts_file = hosts_file
@@ -76,16 +77,15 @@ class DnsMonitor
   end
 
   def get_devices
-    html_string = raw_host_data.gsub(/[\r\n]/, '')  # remove newlines
+    html_string = device_table_html.gsub(/[\r\n]/, '')  # remove newlines
     html_string.scan(DEVICE_PARSE_REGEX).map do |device_variables|
       Device.new(*device_variables)
     end
   end
 
-  def raw_host_data
-    # download the html page as string
-    open(@table_url, http_basic_authentication: @router_auth) do |request|
-      request.read
+  def device_table_html
+    Net::HTTP.start(@table_url.host, @table_url.port) do |http|
+      http.request(@table_request).body
     end
   end
 end
@@ -106,6 +106,7 @@ class Loop
     loop do
       sleep 2.5
       @monitor.update
+      GC.start
     end
   end
 end
