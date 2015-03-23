@@ -4,15 +4,15 @@ require 'open-uri'
 require 'yaml'
 
 class DnsMonitor
-  TABLE_PARSE_REGEX = %r{
-    <td>(?<hostname>[^\s]*)\s*</td>
+  DEVICE_PARSE_REGEX = %r{
+    <td>([^\s]*)\s*</td>
     \s*
-    <td>(?<ip>([0-9]+\.){3}[0-9]+)\s*</td>
+    <td>((?:[0-9]+\.){3}[0-9]+)\s*</td>
     \s*
-    <td>(?<mac>([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))\s*</td>
+    <td>((?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2}))\s*</td>
   }x
 
-  Device = Struct.new(*TABLE_PARSE_REGEX.names.map(&:to_sym))
+  Device = Struct.new(:hostname, :ip, :mac)
 
   def initialize(router_host:, router_user:, router_password:,
                  hosts:, hosts_file:)
@@ -77,7 +77,7 @@ class DnsMonitor
 
   def get_devices
     html_string = raw_host_data.gsub(/[\r\n]/, '')  # remove newlines
-    html_string.scan(TABLE_PARSE_REGEX).map do |device_variables|
+    html_string.scan(DEVICE_PARSE_REGEX).map do |device_variables|
       Device.new(*device_variables)
     end
   end
