@@ -106,7 +106,6 @@ class Loop
     loop do
       sleep 2.5
       @monitor.update
-      GC.start
     end
   end
 end
