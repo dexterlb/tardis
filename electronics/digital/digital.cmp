@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Fri 10 Apr 2015 06:27:41 PM EEST
+Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Fri 10 Apr 2015 08:16:05 PM EEST
 
 BeginCmp
 TimeStamp = /550E882C;
@@ -95,7 +95,7 @@ BeginCmp
 TimeStamp = /550C91D5;
 Reference = J3;
 ValeurCmp = RJ45;
-IdModule  = Connect:RJ45_8;
+IdModule  = rj45:RJ45_8_BIG;
 EndCmp
 
 BeginCmp
@@ -134,14 +134,14 @@ IdModule  = Pin_Headers:Pin_Header_Straight_1x03;
 EndCmp
 
 BeginCmp
-TimeStamp = /550C91D6;
+TimeStamp = /55289120;
 Reference = P5;
-ValeurCmp = NETWORK;
-IdModule  = Pin_Headers:Pin_Header_Straight_1x10;
+ValeurCmp = NETWORK_CABLE;
+IdModule  = rj45:RJ45_SOLDER;
 EndCmp
 
 BeginCmp
-TimeStamp = /5510ABC6;
+TimeStamp = /552801AE;
 Reference = P6;
 ValeurCmp = EXTERNAL_HEADER;
 IdModule  = Pin_Headers:Pin_Header_Angled_2x05;
@@ -150,12 +150,12 @@ EndCmp
 BeginCmp
 TimeStamp = /5510BFA9;
 Reference = P7;
-ValeurCmp = CONN_02X05;
+ValeurCmp = POWER_OUT;
 IdModule  = Pin_Headers:Pin_Header_Straight_2x05;
 EndCmp
 
 BeginCmp
-TimeStamp = /5510ACCF;
+TimeStamp = /5528023A;
 Reference = P8;
 ValeurCmp = INTERNAL_HEADER;
 IdModule  = Pin_Headers:Pin_Header_Straight_2x05;
