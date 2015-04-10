@@ -1,4 +1,4 @@
-update=Mon 23 Mar 2015 05:50:05 PM EET
+update=Fri 10 Apr 2015 06:00:53 PM EEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -61,3 +61,4 @@ LibName29=contrib
 LibName30=valves
 LibName31=crystal_s
 LibName32=usb
+LibName33=mos_p_123
