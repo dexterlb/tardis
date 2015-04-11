@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Fri 10 Apr 2015 08:16:05 PM EEST
+Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Sat 11 Apr 2015 03:55:07 PM EEST
 
 BeginCmp
 TimeStamp = /550E882C;
@@ -75,6 +75,13 @@ TimeStamp = /550E272C;
 Reference = D2;
 ValeurCmp = LED;
 IdModule  = Pin_Headers:Pin_Header_Straight_1x02;
+EndCmp
+
+BeginCmp
+TimeStamp = /55292D4A;
+Reference = F1;
+ValeurCmp = FUSE;
+IdModule  = Capacitors_ThroughHole:Capacitor6MMDiscRM5;
 EndCmp
 
 BeginCmp
