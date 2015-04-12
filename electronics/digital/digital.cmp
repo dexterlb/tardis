@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Sat 11 Apr 2015 03:55:07 PM EEST
+Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Sun 12 Apr 2015 08:24:17 PM EEST
 
 BeginCmp
 TimeStamp = /550E882C;
@@ -242,7 +242,7 @@ BeginCmp
 TimeStamp = /550D0786;
 Reference = Q8;
 ValeurCmp = MOSFET_N;
-IdModule  = Transistors_TO-220:TO-220_FET-GDS_Vertical;
+IdModule  = SMD_Packages:DPAK-2-1EP_GDS;
 EndCmp
 
 BeginCmp
