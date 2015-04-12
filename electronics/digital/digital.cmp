@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Sun 12 Apr 2015 08:24:17 PM EEST
+Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Sun 12 Apr 2015 10:09:08 PM EEST
 
 BeginCmp
 TimeStamp = /550E882C;
@@ -18,7 +18,7 @@ BeginCmp
 TimeStamp = /550C91BA;
 Reference = C2;
 ValeurCmp = 100n;
-IdModule  = Capacitors_ThroughHole:Capacitor6MMDiscRM5;
+IdModule  = SMD_Packages:SMD-1206;
 EndCmp
 
 BeginCmp
@@ -32,7 +32,7 @@ BeginCmp
 TimeStamp = /550C91BE;
 Reference = C4;
 ValeurCmp = 100n;
-IdModule  = Capacitors_ThroughHole:Capacitor6MMDiscRM5;
+IdModule  = SMD_Packages:SMD-1206;
 EndCmp
 
 BeginCmp
@@ -333,20 +333,6 @@ BeginCmp
 TimeStamp = /550D4594;
 Reference = R11;
 ValeurCmp = 1;
-IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
-EndCmp
-
-BeginCmp
-TimeStamp = /550C91CE;
-Reference = R12;
-ValeurCmp = 10;
-IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
-EndCmp
-
-BeginCmp
-TimeStamp = /550E5632;
-Reference = R13;
-ValeurCmp = 10;
 IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
 EndCmp
 
