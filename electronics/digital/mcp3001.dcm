@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP MCP3001
+D MCP3550-50, Single Delta-Sigma 22bit Analog to Digital Converter, SPI Interface, 50Hz Rejection, MSOP8
+K Sigma-Delta ADC Converter 22bit SPI
+F http://ww1.microchip.com/downloads/en/devicedoc/21950c.pdf
+$ENDCMP
+#
+#End Doc Library

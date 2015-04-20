@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Sun 19 Apr 2015 12:40:43 PM EEST
+Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Tue 21 Apr 2015 12:11:53 AM EEST
 
 BeginCmp
 TimeStamp = /550E882C;
@@ -64,6 +64,27 @@ IdModule  = Capacitors_ThroughHole:Capacitor6MMDiscRM5;
 EndCmp
 
 BeginCmp
+TimeStamp = /5535D3DA;
+Reference = C9;
+ValeurCmp = 100n;
+IdModule  = Capacitors_ThroughHole:Capacitor6MMDiscRM5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5535B414;
+Reference = C10;
+ValeurCmp = 10u;
+IdModule  = Capacitors_ThroughHole:Capacitor10x16RM5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5535B124;
+Reference = C11;
+ValeurCmp = 100n;
+IdModule  = Capacitors_ThroughHole:Capacitor6MMDiscRM5;
+EndCmp
+
+BeginCmp
 TimeStamp = /550C91CD;
 Reference = D1;
 ValeurCmp = LED;
@@ -75,6 +96,13 @@ TimeStamp = /550E272C;
 Reference = D2;
 ValeurCmp = LED;
 IdModule  = Pin_Headers:Pin_Header_Straight_1x02;
+EndCmp
+
+BeginCmp
+TimeStamp = /55359269;
+Reference = D3;
+ValeurCmp = TL431;
+IdModule  = Discret:TO92-123;
 EndCmp
 
 BeginCmp
@@ -187,6 +215,13 @@ TimeStamp = /5533A385;
 Reference = P11;
 ValeurCmp = CONTROL;
 IdModule  = Pin_Headers:Pin_Header_Straight_1x04;
+EndCmp
+
+BeginCmp
+TimeStamp = /55356EB4;
+Reference = P12;
+ValeurCmp = ADC;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x03;
 EndCmp
 
 BeginCmp
@@ -337,6 +372,20 @@ IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
 EndCmp
 
 BeginCmp
+TimeStamp = /5535C54E;
+Reference = R12;
+ValeurCmp = 10k;
+IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /5535C856;
+Reference = R13;
+ValeurCmp = Photores;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02;
+EndCmp
+
+BeginCmp
 TimeStamp = /550CCF80;
 Reference = R14;
 ValeurCmp = 10k;
@@ -393,9 +442,37 @@ IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
 EndCmp
 
 BeginCmp
+TimeStamp = /55359791;
+Reference = R22;
+ValeurCmp = 10k;
+IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /5535A3DB;
+Reference = R23;
+ValeurCmp = 2.2k;
+IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /5535A20C;
+Reference = R24;
+ValeurCmp = 10k;
+IdModule  = Resistors_ThroughHole:Resistor_Horizontal_RM10mm;
+EndCmp
+
+BeginCmp
 TimeStamp = /550E5CA1;
 Reference = U1;
 ValeurCmp = DS1307+;
+IdModule  = Power_Integrations:SO-8;
+EndCmp
+
+BeginCmp
+TimeStamp = /55356B06;
+Reference = U2;
+ValeurCmp = MCP3001;
 IdModule  = Power_Integrations:SO-8;
 EndCmp
 

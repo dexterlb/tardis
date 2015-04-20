@@ -1,0 +1,7 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP TL431
+D Reference voltage regulator
+$ENDCMP
+#
+#End Doc Library
