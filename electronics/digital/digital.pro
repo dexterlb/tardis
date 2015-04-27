@@ -1,6 +1,6 @@
-update=Mon 20 Apr 2015 11:56:22 PM EEST
+update=Tue 28 Apr 2015 12:10:23 AM EEST
 version=1
-last_client=kicad
+last_client=eeschema
 [pcbnew]
 version=1
 LastNetListRead=
@@ -64,3 +64,16 @@ LibName32=usb
 LibName33=mos_p_123
 LibName34=mcp3001
 LibName35=tl431
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+RptD_X=0
+RptD_Y=100
+RptLab=1
+LabSize=60
