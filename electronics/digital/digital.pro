@@ -1,4 +1,4 @@
-update=Tue 28 Apr 2015 12:10:23 AM EEST
+update=Tue 28 Apr 2015 10:03:36 PM EEST
 version=1
 last_client=eeschema
 [pcbnew]
@@ -67,10 +67,10 @@ LibName35=tl431
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
-PlotDirectoryName=
+PlotDirectoryName=../prints/
 SubpartIdSeparator=0
 SubpartFirstId=65
-NetFmtName=
+NetFmtName=Pcbnew
 SpiceForceRefPrefix=0
 SpiceUseNetNumbers=0
 RptD_X=0

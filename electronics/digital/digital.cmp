@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Tue 21 Apr 2015 12:11:53 AM EEST
+Cmp-Mod V01 Created by Cvpcb (after 2015-jan-16 BZR unknown)-product   date = Tue 28 Apr 2015 09:12:08 PM EEST
 
 BeginCmp
 TimeStamp = /550E882C;
@@ -199,7 +199,7 @@ EndCmp
 BeginCmp
 TimeStamp = /550E901A;
 Reference = P9;
-ValeurCmp = I2C;
+ValeurCmp = I2C 1;
 IdModule  = Pin_Headers:Pin_Header_Straight_1x02;
 EndCmp
 
@@ -211,17 +211,24 @@ IdModule  = Pin_Headers:Pin_Header_Straight_1x02;
 EndCmp
 
 BeginCmp
-TimeStamp = /5533A385;
+TimeStamp = /553FE851;
 Reference = P11;
 ValeurCmp = CONTROL;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x05;
+EndCmp
+
+BeginCmp
+TimeStamp = /5533A385;
+Reference = P12;
+ValeurCmp = ADC_SPI;
 IdModule  = Pin_Headers:Pin_Header_Straight_1x04;
 EndCmp
 
 BeginCmp
-TimeStamp = /55356EB4;
-Reference = P12;
-ValeurCmp = ADC;
-IdModule  = Pin_Headers:Pin_Header_Straight_1x03;
+TimeStamp = /55400B41;
+Reference = P13;
+ValeurCmp = I2C 2;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02;
 EndCmp
 
 BeginCmp
