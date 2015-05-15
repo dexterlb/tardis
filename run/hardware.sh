@@ -1,11 +1,29 @@
 #!/bin/zsh
 
-tardis_led_pin=21
-stars_led_pin=22
-amp_pin=17
-pwm_pin=18
+tardis_led_pin=13   # gpio-21
+stars_led_pin=15    # gpio-22
+amp_pin=11          # gpio-17
+pwm_pin=12          # gpio-18
 
-# set pin $1 to value $2 (can be 0, 1, or any float between 0 and 1)
+pwm_width=20000
+
 function set_pin {
-    echo "${1}=${2}" > /dev/pi_blaster
+    if [[ "$2" == on ]]; then
+        state=1
+    elif [[ "$2" == off ]]; then
+        state=0
+    else
+        state="$2"
+    fi
+
+    microseconds=$(( ${state} * ${pwm_width} ))
+    echo "P1-${1}=${microseconds%%.*}us" > /dev/servoblaster
+}
+
+function light_strength {
+    set_pin "${pwm_pin}" $(( 1 - ${1} ))
+}
+
+function amp_power {
+    set_pin ${amp_pin} ${1}
 }
