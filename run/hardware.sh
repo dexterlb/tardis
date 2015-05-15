@@ -21,7 +21,12 @@ function set_pin {
 }
 
 function light_strength {
+    last_light_strength=${1}
     set_pin "${pwm_pin}" $(( 1 - ${1} ))
+}
+
+function light_fade {
+    # fill me
 }
 
 function amp_power {
