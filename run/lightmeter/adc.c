@@ -59,12 +59,12 @@ int get_data() {
     return data & 1023;
 }
 
-int avg(int* numbers, size_t size) {
+float avg(int* numbers, size_t size) {
     int sum;
     for (size_t i = 0; i < size; i++) {
         sum += numbers[i];
     }
-    return sum / size;
+    return (float)sum / size;
 }
 
 int main(int argc, char* argv[]) {
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
         }
 
         FILE* out = fopen(out_file, "w");
-        fprintf(out, "%d\n", avg(buf, buf_size));
+        fprintf(out, "%1.3f\n", avg(buf, buf_size) / 1024);
         fclose(out);
 
         usleep(delay_between_reads);
