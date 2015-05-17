@@ -1,9 +1,9 @@
-(kicad_pcb (version 4) (host pcbnew "(after 2015-jan-16 BZR unknown)-product")
+(kicad_pcb (version 4) (host pcbnew "(after 2015-may-01 BZR unknown)-product")
 
   (general
     (links 164)
     (no_connects 5)
-    (area 186.69 48.732 264.870001 153.035001)
+    (area 0 0 0 0)
     (thickness 1.6)
     (drawings 1)
     (tracks 341)
@@ -75,7 +75,7 @@
     (grid_origin 142.24 83.185)
     (visible_elements FFFEFF7F)
     (pcbplotparams
-      (layerselection 0x00000_80000000)
+      (layerselection 0x00030_80000001)
       (usegerberextensions false)
       (excludeedgelayer true)
       (linewidth 0.100000)
@@ -96,7 +96,7 @@
       (subtractmaskfromsilk false)
       (outputformat 5)
       (mirror false)
-      (drillshape 1)
+      (drillshape 0)
       (scaleselection 1)
       (outputdirectory ../prints/))
   )
@@ -2185,7 +2185,7 @@
     (fp_text reference R22 (at 0 0 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (fp_text value 10k (at 3.81 3.81 180) (layer F.SilkS) hide
+    (fp_text value 560 (at 3.81 3.81 180) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_line (start -2.54 -1.27) (end 2.54 -1.27) (layer F.SilkS) (width 0.15))
@@ -2213,7 +2213,7 @@
     (fp_text reference R23 (at 0 0 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (fp_text value 2.2k (at 3.81 3.81 180) (layer F.SilkS) hide
+    (fp_text value 0 (at 3.81 3.81 180) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_line (start -2.54 -1.27) (end 2.54 -1.27) (layer F.SilkS) (width 0.15))
@@ -2241,7 +2241,7 @@
     (fp_text reference R24 (at 0 0) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (fp_text value 10k (at 3.81 3.81) (layer F.SilkS) hide
+    (fp_text value DNP (at 3.81 3.81) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_line (start -2.54 -1.27) (end 2.54 -1.27) (layer F.SilkS) (width 0.15))
@@ -2735,15 +2735,15 @@
   (segment (start 254 123.825) (end 254.635 123.19) (width 0.8) (layer B.Cu) (net 33) (tstamp 5529326A))
   (segment (start 246.38 123.825) (end 254 123.825) (width 0.8) (layer B.Cu) (net 33) (tstamp 55293269))
   (segment (start 245.745 123.19) (end 246.38 123.825) (width 0.8) (layer B.Cu) (net 33) (tstamp 55293268))
-  (segment (start 224.79 107.95) (end 220.98 107.95) (width 0.8) (layer B.Cu) (net 34) (status 400000))
-  (segment (start 220.345 108.585) (end 220.345 110.871) (width 0.8) (layer B.Cu) (net 34) (tstamp 553FCF72) (status 800000))
+  (segment (start 224.79 107.95) (end 220.98 107.95) (width 0.8) (layer B.Cu) (net 34))
+  (segment (start 220.345 108.585) (end 220.345 110.871) (width 0.8) (layer B.Cu) (net 34) (tstamp 553FCF72))
   (segment (start 220.98 107.95) (end 220.345 108.585) (width 0.8) (layer B.Cu) (net 34) (tstamp 553FCF71))
-  (segment (start 227.965 107.95) (end 224.79 107.95) (width 0.8) (layer B.Cu) (net 34) (status C00000))
+  (segment (start 227.965 107.95) (end 224.79 107.95) (width 0.8) (layer B.Cu) (net 34))
   (segment (start 231.775 107.95) (end 227.965 107.95) (width 0.8) (layer B.Cu) (net 34))
-  (segment (start 224.79 105.41) (end 219.71 105.41) (width 0.8) (layer B.Cu) (net 35) (status 400000))
-  (segment (start 219.075 106.045) (end 219.075 110.871) (width 0.8) (layer B.Cu) (net 35) (tstamp 553FCF78) (status 800000))
+  (segment (start 224.79 105.41) (end 219.71 105.41) (width 0.8) (layer B.Cu) (net 35))
+  (segment (start 219.075 106.045) (end 219.075 110.871) (width 0.8) (layer B.Cu) (net 35) (tstamp 553FCF78))
   (segment (start 219.71 105.41) (end 219.075 106.045) (width 0.8) (layer B.Cu) (net 35) (tstamp 553FCF77))
-  (segment (start 227.965 105.41) (end 224.79 105.41) (width 0.8) (layer B.Cu) (net 35) (status C00000))
+  (segment (start 227.965 105.41) (end 224.79 105.41) (width 0.8) (layer B.Cu) (net 35))
   (segment (start 229.87 105.41) (end 227.965 105.41) (width 0.8) (layer B.Cu) (net 35) (tstamp 55337F1E))
   (segment (start 231.775 104.775) (end 230.505 104.775) (width 0.8) (layer B.Cu) (net 35))
   (segment (start 230.505 104.775) (end 229.87 105.41) (width 0.8) (layer B.Cu) (net 35) (tstamp 55337F1D))
