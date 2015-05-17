@@ -2,57 +2,93 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <linux/spi/spidev.h>
-#include <linux/types.h>
-#include <sys/ioctl.h>
 
-const int cs_pin = 8;
-const int clk_pin = 11;
-const int data_pin = 9;
+#include <bcm2835.h>
+
+const int cs_pin = RPI_GPIO_P1_24;      // gpio 8
+const int clk_pin = RPI_GPIO_P1_23;     // gpio 11
+const int data_pin = RPI_GPIO_P1_21;    // gpio 9
 
 const useconds_t clock_time = 1;
+const useconds_t delay_between_reads = 250000;
 
-int open_spi(const char* device) {
-    unsigned char mode = SPI_MODE_3;
-    unsigned int speed = 1000;
-    unsigned char bits_per_word = 8;
+const size_t buf_size = 5;
+const char out_file[] = "/tmp/adc";
 
-    int spi_fd = open(device, O_RDWR);
-    if (spi_fd < 0) {
-        perror("can't open SPI device");
-        exit(1);
-    }
-    if (ioctl(spi_fd, SPI_IOC_RD_MODE, &mode) < 0) {
-        perror("can't set SPI read mode");
-        exit(1);
-    }
-    if (ioctl(spi_fd, SPI_IOC_RD_BITS_PER_WORD, &bits_per_word) < 0) {
-        perror("can't set SPI read bits per word");
-        exit(1);
-    }
-    if (ioctl(spi_fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed) < 0) {
-        perror("can't set SPI read speed");
+void init() {
+    if (!bcm2835_init()) {
+        fprintf(stderr, "can't init bcm2835");
         exit(1);
     }
 
-    return spi_fd;
+    bcm2835_gpio_fsel(cs_pin, BCM2835_GPIO_FSEL_OUTP);
+    bcm2835_gpio_fsel(clk_pin, BCM2835_GPIO_FSEL_OUTP);
+    bcm2835_gpio_fsel(data_pin, BCM2835_GPIO_FSEL_INPT);
+
+    bcm2835_gpio_write(cs_pin, HIGH);
+    bcm2835_gpio_write(clk_pin, HIGH);
 }
 
-uint16_t get_data(int spi_fd) {
-    uint16_t data;
-    if (read(spi_fd, &data, sizeof(data)) < 0) {
-        perror("can't read data from SPI");
+int get_data() {
+    int data = 0;
+
+    usleep(clock_time);
+    bcm2835_gpio_write(clk_pin, LOW);
+    bcm2835_gpio_write(cs_pin, LOW);
+
+    for (int i = 0; i < 13; i++) {
+        usleep(clock_time);
+        bcm2835_gpio_write(clk_pin, HIGH);
+        usleep(clock_time);
+        bcm2835_gpio_write(clk_pin, LOW);
+        
+        data <<= 1;
+        data |= bcm2835_gpio_lev(data_pin);  // push the data bit at the right side
     }
-    data >>= 3;
-    data &= 1023;
-    return data;
+
+    bcm2835_gpio_write(cs_pin, HIGH);
+    bcm2835_gpio_write(clk_pin, HIGH);
+
+    // data is in the form: ? ? 0 x x x x x x x x x x
+    //                          ^ |_|_|_|_|_|_|_|_|_|__ 10 data bits  
+    //                          |
+    //                          null bit
+    if ((data >> 10) & 1) {
+        return -1;  // NULL bit is not zero :(
+    }
+    return data & 1023;
+}
+
+int avg(int* numbers, size_t size) {
+    int sum;
+    for (size_t i = 0; i < size; i++) {
+        sum += numbers[i];
+    }
+    return sum / size;
 }
 
 int main(int argc, char* argv[]) {
-    int spi_fd = open_spi("/dev/spidev0.0");
-    printf("%d\n", get_data(spi_fd));
-    close(spi_fd);
-   
+    init();
+
+    int position = 0;
+    int buf[buf_size];
+
+    for (int i = 0; i < buf_size; i++) {
+        buf[i] = 0;
+    }
+
+    while (1) {
+        buf[position++] = get_data();
+        if (position >= buf_size) {
+            position = 0;
+        }
+
+        FILE* out = fopen(out_file, "w");
+        fprintf(out, "%d\n", avg(buf, buf_size));
+        fclose(out);
+
+        usleep(delay_between_reads);
+    }
+
     return 0;
 }
