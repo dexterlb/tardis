@@ -32,6 +32,9 @@ function set_led_strength {
 }
 
 function led_strength {
+    if [[ ! -f /tmp/last_led_strength ]]; then
+        echo 1 > /tmp/last_led_strength
+    fi
     cat /tmp/last_led_strength
 }
 
