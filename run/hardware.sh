@@ -32,10 +32,10 @@ function set_led_strength {
 }
 
 function led_strength {
-    if [[ ! -f /tmp/last_led_strength ]]; then
-        echo 1 > /tmp/last_led_strength
+    if cat /tmp/last_led_strength 2>/dev/null; then :
+    else
+        echo 1. | tee /tmp/last_led_strength
     fi
-    cat /tmp/last_led_strength
 }
 
 function led_fade {
