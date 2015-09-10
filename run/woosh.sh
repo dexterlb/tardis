@@ -1,4 +1,9 @@
 #!/bin/zsh
+
+# TODO: make sure only one of these plays at a time
+# or not, maybe make amp_power a stack to allow simoultanenus playing?
+# TODO: make a safe "play" function that wraps sox play and kills it if it hangs
+
 cd "$(dirname "$(readlink -f "$0")")"  # go to the dir of the script
 . ./hardware.sh
 

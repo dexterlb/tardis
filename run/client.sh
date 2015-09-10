@@ -9,5 +9,5 @@ fi
 cd "$(dirname "$(readlink -f "$0")")"  # go to the dir of the script
 
 if [[ "$1" == add ]]; then
-    ./woosh.sh 1
+    ./woosh.sh 1 &
 fi
