@@ -23,7 +23,9 @@ function set_pin {
 }
 
 function lightness {
-    printf '%.3g\n' $(( 1 - $(cat /tmp/adc) ))  # round to 3 digits
+    tail "${@}" /tmp/adc 2>/dev/null | while read darkness; do
+        printf '%.3g\n' $(( 1 - darkness ))  # round to 3 digits
+    done
 }
 
 function set_led_strength {
@@ -44,7 +46,7 @@ function led_fade {
     step_count=$(( ${2} / fade_step_time ))
     step_count=${step_count%%.*}                # convert to int
     step=$(( (after - before) / step_count ))
-    
+
     for i in {1..${step_count}}; do
         sleep ${fade_step_time}
         set_led_strength $(( before + ( i * step ) ))
