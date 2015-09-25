@@ -3,3 +3,8 @@
 *.swo
 *.gem
 Gemfile.lock
+*.blend[0-9]
+*.kicad_pcb-bak
+
+run/vote/
+run/ip_config.sh
