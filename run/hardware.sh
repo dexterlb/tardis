@@ -28,6 +28,14 @@ function lightness {
     done
 }
 
+function tardis_led {
+    set_pin "${tardis_led_pin}" "${@}"
+}
+
+function stars {
+    set_pin "${stars_led_pin}" "${@}"
+}
+
 function set_led_strength {
     echo "${1}" > /tmp/last_led_strength
     set_pin "${pwm_pin}" $(( 1 - ${1} ))
