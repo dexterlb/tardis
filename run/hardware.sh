@@ -53,6 +53,28 @@ function led_fade {
     done
 }
 
+function amp_power_clients {
+    cat /tmp/amp_power_clients 2>/dev/null
+}
+
 function amp_power {
-    set_pin ${amp_pin} ${1}
+    if [[ "${1}" == push ]]; then
+        if [[ $(amp_power_clients) -lt 1 ]]; then
+            set_pin ${amp_pin} on
+        fi
+        echo $(( $(amp_power_clients) + 1 )) > /tmp/amp_power_clients
+    elif [[ "${1}" == pop ]]; then
+        if [[ $(cat /tmp/amp_power_clients) -le 1 ]]; then
+            set_pin ${amp_pin} off
+        fi
+        echo $(( $(amp_power_clients) - 1 )) > /tmp/amp_power_clients
+    elif [[ "${1}" == 1 || "${1}" == on ]]; then
+        if [[ $(amp_power_clients) -lt 1 ]]; then
+            echo 1 > /tmp/amp_power_clients
+        fi
+        set_pin ${amp_pin} on
+    elif [[ "${1}" == 0 || "${1}" == off ]]; then
+        rm -f /tmp/amp_power_clients
+        set_pin ${amp_pin} off
+    fi
 }
