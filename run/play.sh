@@ -4,14 +4,14 @@ cd "$(dirname "$(readlink -f "$0")")"  # go to the dir of the script
 . ./hardware.sh
 
 function light_fx {
-    start_time=$(( $(date +%s%N) / 1000000000.0 ))
+    start_time=$(date +%s.%N)
 
     set_led_strength 0
     tardis_led on
 
     {
         while read time value; do
-            sleep $(( start_time + time - ( $(date +%s%N) / 1000000000.0 ) )) &>/dev/null
+            sleep $(( start_time + time - $(date +%s.%N) )) &>/dev/null
             set_led_strength "${value}"
         done
 
