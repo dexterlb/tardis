@@ -67,9 +67,6 @@ case "${1}" in
         printinfo=42
         report
         ;;
-    'test')
-        lag 8.8.8.8
-        ;;
     *)
         echo 'First argument must be (log|report|info)'
         ;;
