@@ -33,12 +33,14 @@ class TardisTelegramBot:
         while True:
             for update in self.bot.getUpdates(offset=last_update, timeout=30):
                 if update.message:
-                    self.logger.info('received update with message: %s',
-                                 str(update))
+                    self.logger.info(
+                        'received update with message: %s', str(update)
+                    )
                     self.process_message(update.message)
                 else:
-                    self.logger.warning('received update without message: %s',
-                                    str(update))
+                    self.logger.warning(
+                        'received update without message: %s', str(update)
+                    )
 
                 last_update = update.update_id + 1
 
