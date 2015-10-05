@@ -67,8 +67,12 @@ target/
 *.swo
 *.gem
 Gemfile.lock
+
 *.blend[0-9]
+
 *.kicad_pcb-bak
+*.bak
+fp-lib-table
 
 run/vote/
 run/ip_config.sh
