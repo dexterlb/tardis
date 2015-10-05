@@ -4,16 +4,29 @@ import sys
 import logging
 
 import telegram
-
+from passlib.apps import custom_app_context as password_manager
 
 class TardisTelegramBot:
-    def __init__(self, telegram_token):
+    def __init__(self, telegram_token, password):
         self.bot = telegram.Bot(token=telegram_token)
+        self.password = password
         self.logger = logging.getLogger('tardis_telegram_bot')
 
+        self.authenticated_chats = []
+        self.spam_chats = []
+
+    def process_command(self, command, message):
+        pass
+
     def process_message(self, message):
-        self.bot.sendMessage(chat_id=message.chat_id,
-                             text=('you said: ' + message.text))
+        text = message.text
+
+        if text.startswith('/'):
+            command = text[1:]
+            self.logger.info('received command: %s', command)
+            self.process_command(command, message)
+        else:
+            self.logger.info('received non-command message: %s', text)
 
     def loop(self):
         last_update = 0
@@ -31,4 +44,4 @@ class TardisTelegramBot:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    TardisTelegramBot(sys.argv[1]).loop()
+    TardisTelegramBot(sys.argv[1], sys.argv[2]).loop()
