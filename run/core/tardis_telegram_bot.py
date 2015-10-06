@@ -2,6 +2,7 @@
 
 import sys
 import logging
+import re
 
 import telegram
 from passlib.apps import custom_app_context as password_manager
@@ -16,7 +17,31 @@ class TardisTelegramBot:
         self.spam_chats = []
 
     def process_command(self, command, message):
-        pass
+        chat = message.chat_id
+        command, *arguments = re.findall(
+            r'(?:[^\s,"]|"(?:\\.|[^"])*")+',    # split on spaces, respecting ""
+            command
+        )
+
+        if chat in self.authenticated_chats:
+            if command == 'forgetme':
+                if chat in self.authenticated_chats:
+                    self.authenticated_chats.remove(chat)
+                if chat in self.spam_chats:
+                    self.spam_chats.remove(chat)
+            self.reply(chat, "You're dead to me.")
+        else:
+            if command == 'password':
+                if arguments and password_manager.verify(arguments[0], self.password):
+                    self.reply(chat, 'Success! You can now use all commands.')
+                    self.authenticated_chats.append(chat)
+                else:
+                    self.reply(chat, 'F U')
+            else:
+                self.reply(chat, 'Please say /password <password> to verify yourself.')
+
+    def reply(self, chat, text):
+        self.bot.sendMessage(chat_id=chat, text=text)
 
     def process_message(self, message):
         text = message.text
