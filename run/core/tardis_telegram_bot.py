@@ -29,7 +29,20 @@ class TardisTelegramBot:
                     self.authenticated_chats.remove(chat)
                 if chat in self.spam_chats:
                     self.spam_chats.remove(chat)
-            self.reply(chat, "You're dead to me.")
+                self.reply(chat, "You're dead to me.")
+            elif command == 'spam':
+                if arguments and arguments[0] == 'on':
+                    if chat not in self.spam_chats:
+                        self.spam_chats.append(chat)
+                    self.reply(chat, 'This chat will be spammed.')
+                elif arguments and arguments[0] == 'off':
+                    if chat in self.spam_chats:
+                        self.spam_chats.remove(chat)
+                    self.reply(chat, 'This chat will not be spammed.')
+                else:
+                    self.reply(chat, 'Please use /spam (on|off).')
+            else:
+                self.reply(chat, 'Unknown command: ' + command)
         else:
             if command == 'password':
                 if arguments and password_manager.verify(arguments[0], self.password):
