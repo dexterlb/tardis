@@ -3,18 +3,52 @@
 import sys
 import logging
 import re
+import os
+import json
 
+from appdirs import AppDirs
 import telegram
 from passlib.apps import custom_app_context as password_manager
 
 class TardisTelegramBot:
-    def __init__(self, telegram_token, password):
-        self.bot = telegram.Bot(token=telegram_token)
-        self.password = password
+    def __init__(self, telegram_token=None, password_hash=None):
         self.logger = logging.getLogger('tardis_telegram_bot')
+
+        self.data_dir = AppDirs('tardis').user_data_dir
+        os.makedirs(self.data_dir, exist_ok=True)
+        self.data_file = os.path.join(self.data_dir, 'telegram_bot.json')
 
         self.authenticated_chats = []
         self.spam_chats = []
+
+        try:
+            self.read_data()
+        except OSError:
+            self.logger.warning("couldn't read data file. first run?")
+
+        if telegram_token:
+            self.telegram_token = telegram_token
+        if password_hash:
+            self.password_hash = password_hash
+
+        self.bot = telegram.Bot(token=self.telegram_token)
+
+    def save_data(self):
+        with open(self.data_file, 'w') as f:
+            json.dump({
+                'authenticated_chats': self.authenticated_chats,
+                'spam_chats': self.spam_chats,
+                'telegram_token': self.telegram_token,
+                'password_hash': self.password_hash
+            }, f)
+
+    def read_data(self):
+        with open(self.data_file, 'r') as f:
+            data = json.load(f)
+            self.authenticated_chats = data['authenticated_chats']
+            self.spam_chats = data['spam_chats']
+            self.telegram_token = data['telegram_token']
+            self.password_hash = data['password_hash']
 
     def process_command(self, command, message):
         chat = message.chat_id
@@ -45,13 +79,19 @@ class TardisTelegramBot:
                 self.reply(chat, 'Unknown command: ' + command)
         else:
             if command == 'password':
-                if arguments and password_manager.verify(arguments[0], self.password):
+                if arguments and password_manager.verify(arguments[0], self.password_hash):
                     self.reply(chat, 'Success! You can now use all commands.')
                     self.authenticated_chats.append(chat)
                 else:
                     self.reply(chat, 'F U')
             else:
                 self.reply(chat, 'Please say /password <password> to verify yourself.')
+
+        self.save_data()
+
+    def send_spam(self, text):
+        for chat in self.spam_chats:
+            self.bot.sendMessage(chat_id=chat, text=text)
 
     def reply(self, chat, text):
         self.bot.sendMessage(chat_id=chat, text=text)
@@ -69,7 +109,7 @@ class TardisTelegramBot:
     def loop(self):
         last_update = 0
         while True:
-            for update in self.bot.getUpdates(offset=last_update, timeout=30):
+            for update in self.bot.getUpdates(offset=last_update, timeout=200):
                 if update.message:
                     self.logger.info(
                         'received update with message: %s', str(update)
@@ -84,4 +124,11 @@ class TardisTelegramBot:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    TardisTelegramBot(sys.argv[1], sys.argv[2]).loop()
+
+    if sys.argv[1] == 'listen':
+        if len(sys.argv) > 3:
+            TardisTelegramBot(sys.argv[2], sys.argv[3]).loop()
+        else:
+            TardisTelegramBot().loop()
+    elif sys.argv[1] == 'spam':
+        TardisTelegramBot().send_spam(sys.stdin.read())
