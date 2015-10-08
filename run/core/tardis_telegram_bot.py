@@ -119,6 +119,8 @@ class PipeListener(Thread):
     def run(self):
         if not os.path.exists(self.pipe_name):
             os.mkfifo(self.pipe_name)
+            os.chmod(self.pipe_name, 0o666)
+            
         while True:
             with open(self.pipe_name, 'r') as pipe:
                 self.bot.send_spam(pipe.read().strip())
