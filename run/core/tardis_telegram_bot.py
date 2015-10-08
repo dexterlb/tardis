@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-import logging
 import re
 import os
 import json
@@ -12,8 +11,6 @@ from passlib.apps import custom_app_context as password_manager
 
 class TardisTelegramBot:
     def __init__(self, telegram_token=None, password_hash=None):
-        self.logger = logging.getLogger('tardis_telegram_bot')
-
         self.data_dir = AppDirs('tardis').user_data_dir
         os.makedirs(self.data_dir, exist_ok=True)
         self.data_file = os.path.join(self.data_dir, 'telegram_bot.json')
@@ -24,7 +21,7 @@ class TardisTelegramBot:
         try:
             self.read_data()
         except OSError:
-            self.logger.warning("couldn't read data file. first run?")
+            pass    # first run
 
         if telegram_token:
             self.telegram_token = telegram_token
@@ -101,30 +98,17 @@ class TardisTelegramBot:
 
         if text.startswith('/'):
             command = text[1:]
-            self.logger.info('received command: %s', command)
             self.process_command(command, message)
-        else:
-            self.logger.info('received non-command message: %s', text)
 
     def loop(self):
         last_update = 0
         while True:
             for update in self.bot.getUpdates(offset=last_update, timeout=200):
                 if update.message:
-                    self.logger.info(
-                        'received update with message: %s', str(update)
-                    )
                     self.process_message(update.message)
-                else:
-                    self.logger.warning(
-                        'received update without message: %s', str(update)
-                    )
-
                 last_update = update.update_id + 1
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-
     if sys.argv[1] == 'listen':
         if len(sys.argv) > 3:
             TardisTelegramBot(sys.argv[2], sys.argv[3]).loop()
