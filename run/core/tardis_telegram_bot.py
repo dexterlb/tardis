@@ -4,6 +4,7 @@ import sys
 import re
 import os
 import json
+from threading import Thread
 
 from appdirs import AppDirs
 import telegram
@@ -108,6 +109,20 @@ class TardisTelegramBot:
                     self.process_message(update.message)
                 last_update = update.update_id + 1
 
+class PipeListener(Thread):
+    pipe_name = '/tmp/spam'
+
+    def __init__(self, bot):
+        self.bot = bot
+        super().__init__()
+
+    def run(self):
+        if not os.path.exists(self.pipe_name):
+            os.mkfifo(self.pipe_name)
+        while True:
+            with open(self.pipe_name, 'r') as pipe:
+                self.bot.send_spam(pipe.read().strip())
+
 if __name__ == '__main__':
     if sys.argv[1] == 'listen':
         if len(sys.argv) > 3:
@@ -116,3 +131,8 @@ if __name__ == '__main__':
             TardisTelegramBot().loop()
     elif sys.argv[1] == 'spam':
         TardisTelegramBot().send_spam(sys.stdin.read())
+    elif sys.argv[1] == 'wait':
+        bot = TardisTelegramBot()
+        listener = PipeListener(bot)
+        listener.start()
+        bot.loop()
