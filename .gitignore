@@ -76,3 +76,6 @@ fp-lib-table
 
 run/vote/
 run/ip_config.sh
+
+# scons
+.sconsign.dblite
