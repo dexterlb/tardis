@@ -46,13 +46,16 @@ optlevel = 's'
 # programmer ID, used by AVRDUDE
 # examples: 'stk500', 'avr910', 'avrisp', 'pony'
 # can be changed with --programmer <programmer>
-avrdude_programmer = 'avr910'
+avrdude_programmer = 'linuxgpio'
 
 # port - serial or parallel port to which the
 # hardware programmer is attached.
 # examples: '/dev/ttyS0', 'COM2', '/dev/ttyUSB0'
 # can be changed on the fly with --port <port>
-avrdude_port = '/dev/ttyUSB0'
+avrdude_port = None
+
+# remote hostname for using avrdude over ssh
+ssh_flash_hostname = "tardis"
 
 # -------- compiler flags ---------
 # these are the flags passed to the compilers
@@ -136,6 +139,10 @@ AddOption('--port', dest='port', type='string', nargs=1
             , action='store', help='Port id as used by avrdude')
 avrdude_port = GetOption('port') or avrdude_port
 
+AddOption('--hostname', dest='hostname', type='string', nargs=1
+            , action='store', help='ssh hostname for remote flashing')
+ssh_flash_hostname = GetOption('hostname') or ssh_flash_hostname
+
 # display the size report in a human-readable format
 # not supported by some old versions of avr-size
 human_readable_size = True
@@ -175,9 +182,17 @@ env.Command('size', targetelf, env['SIZE'] + copt \
     + ' $SOURCE')
 
 # program the flash with avrdude
-env.Command('writeflash', targethex, env['AVRDUDE'] \
-    + ' -c ' + avrdude_programmer + ' -p ' + programmer_mcu \
-    + ' -P ' + avrdude_port + ' -e -U flash:w:$SOURCE')
+avrdude_command = env['AVRDUDE'] \
+    + ' -c ' + avrdude_programmer + ' -p ' + programmer_mcu
+
+if avrdude_port:
+    avrdude_command += ' -P ' + avrdude_port
+
+env.Command('writeflash', targethex, avrdude_command + ' -e -U flash:w:$SOURCE')
+
+env.Command('sshflash', targethex, 'cat "$SOURCE" "$SOURCE" | ' \
+    + 'ssh "' + ssh_flash_hostname + '" "' + avrdude_command + ' -e -U flash:w:-:i"')
+
 
 # create target commands
 env.Alias('elf', targetelf)
