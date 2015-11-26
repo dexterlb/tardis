@@ -12,6 +12,7 @@
 # scons size        : shows size information
 # scons writeflash  : uses avrdude to download
 #                     the program memory to the MCU
+# scons sshflash    : uses avrdude remotely over ssh
 # scons install     : alias for "scons writeflash"
 
 # -------- configuration options ---------
