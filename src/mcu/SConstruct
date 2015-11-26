@@ -1,7 +1,7 @@
 # This SConstruct helps build Atmel AVR
 # projects easier with the AVR-GCC tools.
 #
-# It supports C, C++ and Assembly source fules
+# It supports C, C++ and Assembly source files
 #
 # It contains the following targets:
 # scons             : builds everything
