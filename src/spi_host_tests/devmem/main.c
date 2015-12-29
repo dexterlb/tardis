@@ -11,10 +11,7 @@
 #include "bcm2835.h"
 
 
-uint8_t HW_init(uint32_t spi_speed) {
-	uint16_t sp;
-
-	sp=(uint16_t)(250000L/spi_speed);
+uint8_t HW_init() {
 	if (!bcm2835_init()) {
 		printf("error initializing\n");
 		return 0;
@@ -30,19 +27,16 @@ uint8_t HW_init(uint32_t spi_speed) {
 }
 
 int main(int argc, char *argv[]) {
-	uint32_t spi_speed=5000L;
-
-	if (!HW_init(spi_speed)) {
+	if (!HW_init()) {
         fprintf(stdout, "can't open SPI\n");
 		return 1;
 	}
 
-    char buff[2];
+    char data;
     for (int i = 0; i < 50; i++) {
-        buff[0] = 0xbe;
-        buff[1] = 56;
-        bcm2835_spi_transfern(buff,2);
-        printf("pair: 0x%02x 0x%02x\n", buff[0], buff[1]);
+        data = 0x42;
+        bcm2835_spi_transfern(&data, 1);
+        printf("received: 0x%02x\n", data);
     }
 
 	bcm2835_spi_end();
