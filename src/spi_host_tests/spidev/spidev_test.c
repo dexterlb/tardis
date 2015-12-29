@@ -10,7 +10,7 @@
 const useconds_t clock_time = 1;
 
 int open_spi(const char* device) {
-    unsigned char mode = SPI_MODE_3;
+    unsigned char mode = SPI_MODE_0;
     unsigned int speed = 1000;
     unsigned char bits_per_word = 8;
 
