@@ -7,17 +7,17 @@
 #include "bit_operations.h"
 
 
+void spi_init() {
+    USICR = (1 << USIWM0) | (1 << USICS1);
+}
+
 uint8_t spi_readWrite(uint8_t data)
 {
-    uint8_t result = 0;
     while (bitset(PIND, 0));
-    for (int8_t i = 7; i >= 0; i--) {
-        setbitval(PORTB, 6, data & (1 << i));
-        while (bitclear(PINB, 7));
-        result |= (!bitclear(PINB, 5) << i);
-        while (bitset(PINB, 7));
-    }
-    return result;
+    USIDR = data;
+    setbit(USISR, USIOIF);
+    while (bitclear(USISR, USIOIF));
+    return USIDR;
 }
 
 static inline void init(void)
@@ -26,6 +26,7 @@ static inline void init(void)
     DDRB = DDRB_STATE;
     DDRD = DDRD_STATE;
 
+    spi_init();
 	// sei();
 }
 
@@ -35,21 +36,10 @@ int main(void)
     init();
     PORTD = 0;
     // main loop
-    uint8_t data;
+    uint8_t data = 42;
 
-    // setbit(MISO_PORT, MISO_PIN);
-    // PORTB |= (1 << 6);
-    // setbit(PORTB, 6);
-    // setbit(MISO_PORT, MISO_PIN);    // WTF?! this doesn't work?????
     for (;;) {
-        /*
-        _delay_ms(3000);
-        PORTD = 0xFF;
-        _delay_ms(3000);
-        PORTD = 0x00;
-        */
-        data = spi_readWrite(42);
-        data = spi_readWrite(data + 1);
+        data = spi_readWrite(5);
         if (data) {
             PORTD = data;
         }
