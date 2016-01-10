@@ -2,9 +2,10 @@ package spi
 
 import (
 	"fmt"
-	"github.com/luismesas/goPi/ioctl"
 	"os"
 	"unsafe"
+
+	"github.com/luismesas/goPi/ioctl"
 )
 
 const SPIDEV = "/dev/spidev"
@@ -61,15 +62,15 @@ func (spi *SPIDevice) Close() error {
 }
 
 // Sends bytes over SPI channel and returns []byte response
-func (spi *SPIDevice) Send(bytes_to_send [3]byte) ([]byte, error) {
+func (spi *SPIDevice) Send(bytes_to_send []byte) ([]byte, error) {
 	wBuffer := bytes_to_send
-	rBuffer := [3]byte{}
+	rBuffer := make([]byte, len(bytes_to_send))
 
 	// generates message
 	transfer := SPI_IOC_TRANSFER{}
-	transfer.txBuf = uint64(uintptr(unsafe.Pointer(&wBuffer)))
-	transfer.rxBuf = uint64(uintptr(unsafe.Pointer(&rBuffer)))
-	transfer.length = uint32(unsafe.Sizeof(wBuffer))
+	transfer.txBuf = uint64(uintptr(unsafe.Pointer(&wBuffer[0])))
+	transfer.rxBuf = uint64(uintptr(unsafe.Pointer(&rBuffer[0])))
+	transfer.length = uint32(len(bytes_to_send))
 	transfer.delayUsecs = SPI_DELAY
 	transfer.bitsPerWord = spi.bpw
 	transfer.speedHz = spi.speed
@@ -80,13 +81,7 @@ func (spi *SPIDevice) Send(bytes_to_send [3]byte) ([]byte, error) {
 		return nil, fmt.Errorf("Error on sending: %s\n", err)
 	}
 
-	// generates a valid response
-	ret := make([]byte, unsafe.Sizeof(rBuffer))
-	for i := range ret {
-		ret[i] = rBuffer[i]
-	}
-
-	return ret, nil
+	return rBuffer, nil
 }
 
 func (spi *SPIDevice) SetMode(mode uint8) error {

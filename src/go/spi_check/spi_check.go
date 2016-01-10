@@ -33,12 +33,11 @@ func main() {
 		return
 	}
 
-	data, err := spiDevice.Send([3]byte{3, 42, 5})
+	data, err := spiDevice.Send([]byte{1, 2, 3, 4})
 
 	if err != nil {
-		fmt.Printf("data: %v\n", data)
+		log.Print(err)
 	} else {
 		fmt.Printf("data: %v\n", data)
-		log.Print(err)
 	}
 }
