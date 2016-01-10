@@ -79,3 +79,7 @@ run/ip_config.sh
 
 # scons
 .sconsign.dblite
+
+# golang
+bin
+pkg
