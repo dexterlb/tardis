@@ -14,7 +14,7 @@ void spi_init() {
 
 uint8_t spi_readWrite(uint8_t data)
 {
-    while (bitset(PIND, 0));    // we are a slave, so wait for Slave Select
+    while (bitset(PIND, 3));    // we are a slave, so wait for Slave Select
     USIDR = data;
     setbit(USISR, USIOIF);
     while (bitclear(USISR, USIOIF));
