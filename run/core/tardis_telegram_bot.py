@@ -117,13 +117,24 @@ class PipeListener(Thread):
         super().__init__()
 
     def run(self):
-        if not os.path.exists(self.pipe_name):
-            os.mkfifo(self.pipe_name)
-            os.chmod(self.pipe_name, 0o666)
+        if os.path.exists(self.pipe_name):
+            os.remove(self.pipe_name)
+        os.mkfifo(self.pipe_name)
+        os.chmod(self.pipe_name, 0o666)
             
         while True:
             with open(self.pipe_name, 'r') as pipe:
                 self.bot.send_spam(pipe.read().strip())
+
+def bot_loop():
+    while True:
+        try:
+            bot = TardisTelegramBot()
+            listener = PipeListener(bot)
+            listener.start()
+            bot.loop()
+        except BaseException as e:
+            print(e)
 
 if __name__ == '__main__':
     if sys.argv[1] == 'listen':
@@ -134,7 +145,4 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'spam':
         TardisTelegramBot().send_spam(sys.stdin.read())
     elif sys.argv[1] == 'wait':
-        bot = TardisTelegramBot()
-        listener = PipeListener(bot)
-        listener.start()
-        bot.loop()
+        bot_loop()
