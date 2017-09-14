@@ -3,8 +3,8 @@ dir="$(dirname "${0}")"
 . "${dir}/ip_config.sh"
 
 function update_single {
-    curl -s -m20 "https://dynamicdns.park-your-domain.com/update?host=${1}&domain=${domain}&password=${password}" \
-        | grep -vF '<ErrCount>0</ErrCount>'
+    python Digital-Ocean-Dynamic-DNS-Updater/updater.py \
+        "${token}" "${domain}" "${1}" A
 }
 
 function update {
