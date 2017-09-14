@@ -3,7 +3,7 @@ dir="$(dirname "${0}")"
 . "${dir}/ip_config.sh"
 
 function update_single {
-    python Digital-Ocean-Dynamic-DNS-Updater/updater.py \
+    python "${dir}"/Digital-Ocean-Dynamic-DNS-Updater/updater.py \
         "${token}" "${domain}" "${1}" A
 }
 
