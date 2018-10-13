@@ -36,7 +36,7 @@ end
 
 environment :prod do
   plugin Mix.Tasks.BuildWeb
-  set include_erts: true
+  set include_erts: false
   set include_src: false
   set cookie: :"uxFe|w6C}L|DK~WX<p4]vC0_G.SOx5}_9J=(*11hX26k@80~}dTKJ2pLBJgIclN]"
 end
