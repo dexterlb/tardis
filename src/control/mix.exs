@@ -22,7 +22,11 @@ defmodule Control.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:junkmesh, git: "https://github.com/DexterLB/junkmesh.git", runtime: false},
+      if Mix.env == :prod do
+        {:junkmesh, git: "https://github.com/DexterLB/junkmesh.git", runtime: false}
+      else
+        {:junkmesh, path: "../../../junkmesh", runtime: false}
+      end,
 
 
       {:distillery, "~> 2.0"},
