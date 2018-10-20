@@ -14,7 +14,7 @@ defmodule Control.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :server, :global_registry],
+      extra_applications: [:logger, :server, :global_registry, :mqtt_mesh],
       mod: {Control.Application, []}
     ]
   end
