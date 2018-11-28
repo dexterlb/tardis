@@ -21,12 +21,22 @@ defmodule Control.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
+    if Mix.env == :prod do
+      [
+        {:potoo_global_registry, git: "https://github.com/DexterLB/potoo.git", sparse: "potoo_global_registry", runtime: false},
+        {:potoo_mqtt,            git: "https://github.com/DexterLB/potoo.git", sparse: "potoo_mqtt",            runtime: false},
+        {:potoo_server,          git: "https://github.com/DexterLB/potoo.git", sparse: "potoo_server",          runtime: false},
+        {:potoo,                 git: "https://github.com/DexterLB/potoo.git", sparse: "potoo",                 runtime: false, override: true},
+      ]
+    else
+      [
+        {:potoo_global_registry, "../../../potoo", sparse: "potoo_global_registry", runtime: false},
+        {:potoo_mqtt,            "../../../potoo", sparse: "potoo_mqtt",            runtime: false},
+        {:potoo_server,          "../../../potoo", sparse: "potoo_server",          runtime: false},
+        {:potoo,                 "../../../potoo", sparse: "potoo",                 runtime: false, override: true},
+      ]
+    end ++
     [
-      if Mix.env == :prod do
-        {:junkmesh, git: "https://github.com/DexterLB/junkmesh.git", runtime: false}
-      else
-        {:junkmesh, path: "../../../junkmesh", runtime: false}
-      end,
 
 
       {:distillery, "~> 2.0"},

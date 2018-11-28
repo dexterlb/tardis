@@ -4,6 +4,16 @@ from bisect import bisect
 
 points = [(0, 0), (0.5, 0.3), (0.7, 0.7), (1, 1)]
 
+def bezier_fours(points):
+    clamp = lambda i: max(min(i, len(points) - 1), 0)
+    return [
+        bezier_four(clamp(i-1), i, i+1, clamp(i+2))
+        for i in range(len(points) - 1)
+    ]
+
+def bezier_four(p1, p2, p3, p4):
+    print(p1, p2, p3, p4)
+
 def bezier_interpolate(points, x):
     xs, ys = unzip(points)
     p1, p2, p3, p4 = neighbours(xs, ys, x)
@@ -63,6 +73,8 @@ def unzip(l):
     return tuple((list(vals) for vals in zip(*l)))
 
 def plot(points, f):
+    bezier_fours(points)
+    return
     xs, ys = zip(*points)
     rev_points = sorted(zip(ys, xs))
     plt.plot(xs, ys, 'go')
