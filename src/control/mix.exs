@@ -23,6 +23,7 @@ defmodule Control.MixProject do
   defp deps do
     if Mix.env == :prod do
       [
+        {:web_ui,                git: "https://github.com/DexterLB/potoo.git", sparse: "web_ui", compile: false, app: false, runtime: false, override: true},
         {:potoo_global_registry, git: "https://github.com/DexterLB/potoo.git", sparse: "potoo_global_registry", runtime: false},
         {:potoo_mqtt,            git: "https://github.com/DexterLB/potoo.git", sparse: "potoo_mqtt",            runtime: false},
         {:potoo_server,          git: "https://github.com/DexterLB/potoo.git", sparse: "potoo_server",          runtime: false},
