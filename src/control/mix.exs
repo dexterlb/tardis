@@ -14,7 +14,7 @@ defmodule Control.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :server, :global_registry, :mqtt_mesh],
+      extra_applications: [:logger, :potoo_server, :potoo_global_registry, :potoo_mqtt],
       mod: {Control.Application, []}
     ]
   end
@@ -30,10 +30,10 @@ defmodule Control.MixProject do
       ]
     else
       [
-        {:potoo_global_registry, "../../../potoo", sparse: "potoo_global_registry", runtime: false},
-        {:potoo_mqtt,            "../../../potoo", sparse: "potoo_mqtt",            runtime: false},
-        {:potoo_server,          "../../../potoo", sparse: "potoo_server",          runtime: false},
-        {:potoo,                 "../../../potoo", sparse: "potoo",                 runtime: false, override: true},
+        {:potoo_global_registry, path: "../../../potoo/potoo_global_registry", sparse: "potoo_global_registry", runtime: false},
+        {:potoo_mqtt,            path: "../../../potoo/potoo_mqtt",            sparse: "potoo_mqtt",            runtime: false},
+        {:potoo_server,          path: "../../../potoo/potoo_server",          sparse: "potoo_server",          runtime: false},
+        {:potoo,                 path: "../../../potoo/potoo",                 sparse: "potoo",                 runtime: false, override: true},
       ]
     end ++
     [
