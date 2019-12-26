@@ -29,7 +29,7 @@ programmer_mcu = 't2313'
 # source files
 # .c, .cpp or .S (NOT .s !!! for asm)
 # example: ['main.c', 'foo.c', 'lowlevel.S']
-sources = ['main.c', 'simple_uart.c']
+sources = ['main.c', 'simple_uart.c', 'proto.c']
 
 # additional options (e.g. '-I/path/to/mydir', '-lmylib')
 options = []
