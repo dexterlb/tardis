@@ -66,10 +66,13 @@ ssh_flash_hostname = "tardis"
 cflags = '-gdwarf-2 -fpack-struct' \
     + ' -fshort-enums -funsigned-bitfields' \
     + ' -funsigned-char' \
+    + ' -fdata-sections -ffunction-sections' \
     + ' -Wall -Werror'
 cppflags = '-fno-exceptions'
 
 asmflags = ''
+
+ldflags = '-Wl,--gc-sections'
 
 
 
@@ -83,7 +86,7 @@ hexformat = 'ihex'
 cflags += ' -I. ' + ' '.join(options) + ' -mmcu=' + mcu \
     + ' -O' + optlevel
 asmflags += ' -I. ' + ' '.join(options) + ' -mmcu=' + mcu
-ldflags = '-mmcu=' + mcu
+ldflags += ' -mmcu=' + mcu
 
 import os, re, SCons.Tool
 
