@@ -29,7 +29,7 @@ programmer_mcu = 't2313'
 # source files
 # .c, .cpp or .S (NOT .s !!! for asm)
 # example: ['main.c', 'foo.c', 'lowlevel.S']
-sources = ['main.c']
+sources = ['main.c', 'simple_uart.c']
 
 # additional options (e.g. '-I/path/to/mydir', '-lmylib')
 options = []
@@ -66,7 +66,7 @@ ssh_flash_hostname = "tardis"
 cflags = '-gdwarf-2 -fpack-struct' \
     + ' -fshort-enums -funsigned-bitfields' \
     + ' -funsigned-char' \
-    + ' -Wall'
+    + ' -Wall -Werror'
 cppflags = '-fno-exceptions'
 
 asmflags = ''
