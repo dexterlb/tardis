@@ -23,13 +23,20 @@ pname = 'mcu'
 # target chip name (as required by avr-gcc, e.g. atmega8)
 mcu = 'attiny2313a'
 
+# chip frequency
+frequency = 12000000
+
 # chip name used by AVRDUDE (e.g. m8)
 programmer_mcu = 't2313'
 
 # source files
 # .c, .cpp or .S (NOT .s !!! for asm)
 # example: ['main.c', 'foo.c', 'lowlevel.S']
-sources = ['main.c', 'simple_uart.c', 'proto.c']
+sources = '''
+main.c
+simple_uart.c
+proto.c
+'''.split()
 
 # additional options (e.g. '-I/path/to/mydir', '-lmylib')
 options = []
@@ -39,7 +46,52 @@ build_dir = 'build'
 
 # optimisation level
 # can be 's' (size opt), '1', '2', '3' or '0' (not advised)
+# when debugging, it might be useful to set it to 1 or 0
 optlevel = 's'
+
+# save debug info to .elf file
+debug_info = True
+
+include_dirs = '''
+'''.split()
+
+library_dirs = '''
+'''.split()
+
+libraries = '''
+'''.split()
+
+defines = '''
+'''.split()
+
+common_flags = '''
+-Wall
+-fpack-struct
+-fshort-enums
+-funsigned-bitfields
+-funsigned-char
+-fdata-sections
+-ffunction-sections
+'''.split()
+
+c_flags = '''
+-std=gnu11
+'''.split()
+
+cpp_flags = '''
+-fno-exceptions
+-std=gnu++11
+'''.split()
+
+asm_flags = '''
+'''.split()
+
+linker_flags = '''
+-Wl,--gc-sections
+'''.split()
+
+linker_libraries = '''
+'''.split()
 
 # -------- AVRDUDE options ---------
 # only fill these in if you're using the writeflash target
@@ -58,35 +110,19 @@ avrdude_port = None
 # remote hostname for using avrdude over ssh
 ssh_flash_hostname = "tardis"
 
-# -------- compiler flags ---------
-# these are the flags passed to the compilers
-# caution: cflags are passed to both cc and ++
-# but asmflags are all and only passed to as
-
-cflags = '-gdwarf-2 -fpack-struct' \
-    + ' -fshort-enums -funsigned-bitfields' \
-    + ' -funsigned-char' \
-    + ' -fdata-sections -ffunction-sections' \
-    + ' -Wall -Werror'
-cppflags = '-fno-exceptions'
-
-asmflags = ''
-
-ldflags = '-Wl,--gc-sections'
-
-
-
 
 # ------------ Config done ---------------
 
+common_flags += ['-O' + optlevel, '-mmcu=' + mcu]
+if debug_info:
+    common_flags += ['-g', '-gdwarf-2']
+
+linker_flags += ['-mmcu=' + mcu]
+
+defines += ['F_CPU=%d' % frequency]
+
 # output format for hex
 hexformat = 'ihex'
-
-# format the flags
-cflags += ' -I. ' + ' '.join(options) + ' -mmcu=' + mcu \
-    + ' -O' + optlevel
-asmflags += ' -I. ' + ' '.join(options) + ' -mmcu=' + mcu
-ldflags += ' -mmcu=' + mcu
 
 import os, re, SCons.Tool
 
@@ -103,6 +139,9 @@ targethex = target + '.hex'
 targeteepromhex = target + '.ee.hex'
 targetdisasm = target + '.s'
 
+# produce map file
+linker_flags += ['-Wl,-Map=' + target + '.map']
+
 # transform all sources to full path
 sources = map(lambda x: toBuildDir(x), sources)
 
@@ -118,6 +157,12 @@ if re.search('^win', dummy['PLATFORM']):
 else:
     env = Environment(ENV = os.environ)
 del dummy
+
+env['CCCOMSTR'] = "[compile c] $SOURCE"
+env['CXXCOMSTR'] = "[compile c++] $SOURCE"
+env['ASCOMSTR'] = "[compile asm] $SOURCE"
+env['ASPPCOMSTR'] = "[compile asm] $SOURCE"
+env['LINKCOMSTR'] = "[link] $SOURCE"
 
 env['PROGSUFFIX']   = '.elf'
 
@@ -152,38 +197,50 @@ ssh_flash_hostname = GetOption('hostname') or ssh_flash_hostname
 human_readable_size = True
 
 # set flags into the environment
-env.Append(CCFLAGS = cflags)
-env.Append(CXXFLAGS = cppflags)
-env.Append(ASFLAGS = asmflags)
-env.Append(LINKFLAGS = ldflags)
+env.Append(CCFLAGS = common_flags)
+env.Append(CFLAGS = c_flags)
+env.Append(CXXFLAGS = cpp_flags)
+env.Append(ASFLAGS = asm_flags + common_flags)
+env.Append(LINKFLAGS = linker_flags)
 
 # build .elf
-env.Program(target = targetelf, source = sources)
+env.Program(
+        target = targetelf,
+        source = sources,
+        LIBS = libraries + linker_libraries,
+        CPPPATH = include_dirs,
+        CPPDEFINES = defines,
+        LIBPATH = library_dirs
+)
+
 
 # build .hex
-env.Command(targethex, targetelf
-    , env['OBJCOPY'] + ' -O ' + hexformat \
-    + ' -j .text -j .data $SOURCE $TARGET')
+env.Command(targethex, targetelf,
+    Action(env['OBJCOPY'] + ' -O ' + hexformat + ' $SOURCE $TARGET', "[generate] $TARGET")
+)
 
 # build .ee.hex (eeprom)
-env.Command(targeteepromhex, targetelf
-    , env['OBJCOPY'] + ' -O ' + hexformat \
+env.Command(targeteepromhex, targetelf,
+    Action(env['OBJCOPY'] + ' -O ' + hexformat \
     + ' -j .eeprom --change-section-lma .eeprom=0' \
-    + ' $SOURCE $TARGET')
+    + ' $SOURCE $TARGET', "[generate] $TARGET" )
+)
 
 # create disassembly (.s)
-env.Command(targetdisasm, targetelf
-    , env['OBJDUMP'] + ' -S $SOURCE > $TARGET')
+env.Command(targetdisasm, targetelf,
+    Action(env['OBJDUMP'] + ' -S $SOURCE > $TARGET', "[disassemble] $TARGET")
+)
 
 # avr-size options
 if human_readable_size:
-    copt = ' -C ' + '--mcu=' + mcu
+    size_options = ' -C ' + '--mcu=' + mcu
 else:
-    copt = ' -A'
+    size_options = ' -A'
 
 # display size
-env.Command('size', targetelf, env['SIZE'] + copt \
-    + ' $SOURCE')
+env.Command('size', targetelf,
+    Action(env['SIZE'] + size_options + ' $SOURCE', "\n ******** \n ")
+)
 
 # program the flash with avrdude
 avrdude_command = env['AVRDUDE'] \

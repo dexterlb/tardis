@@ -1,6 +1,5 @@
 #pragma once
 
-#define F_CPU 12000000ull
 #define BAUDRATE 19200
 
 // 1 - out, 0 - in   v bits v
