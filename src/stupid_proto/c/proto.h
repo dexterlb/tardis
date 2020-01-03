@@ -7,7 +7,7 @@
 typedef void (*generator_t)(uint8_t);
 typedef void (*event_t)();
 
-typedef struct {
+typedef struct proto_encoder_state {
     generator_t out;
     uint8_t bit_counter;
     uint8_t active_byte;
@@ -15,7 +15,7 @@ typedef struct {
     uint8_t byte_counter;
 } proto_encoder_state_t;
 
-typedef struct {
+typedef struct proto_decoder_state {
     generator_t out;
     event_t end;
     event_t err;
@@ -25,12 +25,28 @@ typedef struct {
     uint8_t byte_counter;
 } proto_decoder_state_t;
 
+typedef struct proto_sync_output {
+    size_t n;
+    uint8_t buf[3];
+    bool end;
+    bool err;
+} proto_sync_output_t;
+
 
 void proto_decoder_init(proto_decoder_state_t* p, generator_t out, event_t end, event_t err);
+void proto_decoder_init_sync(proto_decoder_state_t* p, proto_sync_output_t* out);
 uint8_t proto_decoder_push(proto_decoder_state_t* p, uint8_t byte);
+uint8_t proto_decoder_push_sync(proto_decoder_state_t* p, uint8_t byte);
 void proto_decoder_push_bytes(proto_decoder_state_t* p, uint8_t* buf, size_t n);
 
 void proto_encoder_init(proto_encoder_state_t* p, generator_t out);
+void proto_encoder_init_sync(proto_encoder_state_t* p, proto_sync_output_t* out);
 void proto_encoder_push(proto_encoder_state_t* p, uint8_t byte);
+void proto_encoder_push_sync(proto_encoder_state_t* p, uint8_t byte);
 void proto_encoder_end(proto_encoder_state_t* p);
+void proto_encoder_end_sync(proto_encoder_state_t* p);
 void proto_encoder_push_bytes(proto_encoder_state_t* p, uint8_t* buf, size_t n);
+
+bool proto_sync_pop(proto_sync_output_t* out, uint8_t* byte);
+bool proto_sync_end(proto_sync_output_t* out);
+bool proto_sync_err(proto_sync_output_t* out);
