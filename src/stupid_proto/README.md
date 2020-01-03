@@ -14,11 +14,12 @@ We want the following properties:
 #### Known methods for splitting messages
 ##### Start + length
 At the start of the message, specify its length. Optionally, have a "start byte"
-and/or a "message type" (for example, (https://en.wikipedia.org/wiki/Type-length-value)[TLV encoding]). Also, optionally include a CRC or a checksum at the end.
+and/or a "message type" (for example, [TLV encoding](https://en.wikipedia.org/wiki/Type-length-value)). Also, optionally include a CRC or a checksum at the end.
 
 Pros:
 - very easy to implement
 - efficient in terms of both message size and performance
+
 Cons:
 - message corruptions are difficult to process, and even then may cause
 significant problems: for example, if the "length" field gets substituted
@@ -46,6 +47,7 @@ Pros:
 it only affects said message. If the newline character gets corrupted, it
 invalidates 2 messages, since it also acts as a "start" for the next message.
 No need to backtrack to overbuffer and backtrack.
+
 Cons:
 - inefficient
 
@@ -64,5 +66,6 @@ Pros:
 - has the corruption handling properties of "Just use text"
 - quite size-efficient (asymptotically 8/7 of the original message size)
 - probably more performant than using text
+
 Cons:
 - difficult to implement, has multiple edge cases
