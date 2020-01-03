@@ -51,7 +51,7 @@ No need to backtrack to overbuffer and backtrack.
 Cons:
 - inefficient
 
-#### Proposed method
+### Proposed method
 Note: for simplicity, we will use byte-sized words. This can naturally be
 applied for arbitrary words as well.
 
@@ -69,3 +69,9 @@ Pros:
 
 Cons:
 - difficult to implement, has multiple edge cases
+
+
+Another way to think about this encoding is to regard the message as a
+number in base 256. We convert it to base 128, and use the even numbers between
+0 and 254 as digits, while we use the odd numbers to represent possible
+checksums.
