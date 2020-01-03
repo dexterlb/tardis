@@ -22,12 +22,12 @@ void print_bytes(uint8_t* buf, size_t n) {
 
 void sandbox() {
     // uint8_t test[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 , 11, 12, 13, 14, 15};
-    uint8_t test[] = "foobarbazquxblobla";
+    uint8_t test[] = "";
     // uint8_t test[] = "foo";
     uint8_t encoded[50];
     size_t enc_size = 0;
 
-    print_bytes(test, sizeof(test));
+    print_bytes(test, strlen((const char*)test));
 
     proto_encoder_state_t enc;
 
@@ -36,7 +36,7 @@ void sandbox() {
     }
 
     proto_encoder_init(&enc, enc_out);
-    proto_encoder_push_bytes(&enc, test, sizeof(test));
+    proto_encoder_push_bytes(&enc, test, strlen((const char*)test));
     proto_encoder_end(&enc);
 
     print_bytes(encoded, enc_size);
@@ -107,7 +107,7 @@ int do_decode() {
 }
 
 int do_usage(char* name) {
-    fprintf(stderr, "usage: %s (encode|decode)\n", name);
+    fprintf(stderr, "usage: %s (encode|decode|sandbox)\n", name);
     return 1;
 }
 
@@ -117,6 +117,10 @@ int main(int argc, char* argv[]) {
     }
     if (argc == 2 && (strcmp("decode", argv[1]) == 0)) {
         return do_decode();
+    }
+    if (argc == 2 && (strcmp("sandbox", argv[1]) == 0)) {
+        sandbox();
+        return 0;
     }
     return do_usage(argv[0]);
 }

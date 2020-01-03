@@ -2,7 +2,6 @@ package stupidproto
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -13,8 +12,20 @@ func TestEncodeDecode_single(t *testing.T) {
 	twoWay(t, [][]byte{[]byte("foo")})
 }
 
+func TestEncodeDecode_none(t *testing.T) {
+	twoWay(t, [][]byte{})
+}
+
+func TestEncodeDecode_empty(t *testing.T) {
+	twoWay(t, [][]byte{[]byte{}})
+}
+
 func TestEncodeDecode_simple(t *testing.T) {
 	twoWay(t, [][]byte{[]byte("foo"), []byte("bar")})
+}
+
+func TestEncodeDecode_empties(t *testing.T) {
+	twoWay(t, [][]byte{[]byte("foo"), []byte{}, []byte("bar"), []byte{}})
 }
 
 func TestEncodeDecode_zero(t *testing.T) {
@@ -26,15 +37,19 @@ func TestEncodeDecode_edge(t *testing.T) {
 	twoWay(t, [][]byte{[]byte("1234567"), []byte("7654321")})
 }
 
+func TestEncodeDecode_edge8(t *testing.T) {
+	twoWay(t, [][]byte{[]byte("12345678")})
+}
+
 func TestEncodeDecode_edge6(t *testing.T) {
 	twoWay(t, [][]byte{[]byte("123456")})
 }
 
-func TestEncodeDecode_long(t *testing.T) {
+func TestEncodeDecode_long_msg(t *testing.T) {
 	twoWay(t, [][]byte{[]byte("abcdefghijklmnopqrstuvwxyz")})
 }
 
-func TestEncodeDecode_longer(t *testing.T) {
+func TestEncodeDecode_longer_msg(t *testing.T) {
 	twoWay(t, [][]byte{
 		[]byte("buffalo buffalo buffalo buffalo buffalo buffalo buffalo"),
 		[]byte("the quick brown fox jumps over the lazy dog"),
@@ -51,7 +66,7 @@ func TestEncodeDecode_fuzz_short(t *testing.T) {
 }
 
 func TestEncodeDecode_fuzz_long(t *testing.T) {
-	for i := 0; i < 500; i++ {
+	for i := 0; i < 100; i++ {
 		var msgs [][]byte
 		f := fuzz.New().NumElements(0, 200)
 		f.Fuzz(&msgs)
@@ -72,13 +87,37 @@ func twoWay(t *testing.T, msgs [][]byte) {
 		)
 	}
 
-	if !reflect.DeepEqual(msgs, result) {
+	if !compare(msgs, result) {
 		t.Fatalf("decoded data differs from original:\nbefore: %s\nencoded: %s\nafter: %s\n",
 			showMsgs(msgs),
 			showBytes(encoded),
 			showMsgs(result),
 		)
 	}
+}
+
+func compare(a [][]byte, b [][]byte) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if !compareBytes(a[i], b[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+func compareBytes(a []byte, b []byte) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func expectLen(msgs [][]byte) int {

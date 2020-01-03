@@ -1,4 +1,5 @@
 #include "proto.h"
+#include <stdio.h>
 
 uint8_t mask(uint8_t n) {
     return (1 << n) - 1;
@@ -117,15 +118,18 @@ void proto_encoder_init_sync(proto_encoder_state_t* p, proto_sync_output_t* out)
     proto_encoder_init(p, (generator_t)out);
 }
 
-
-void proto_encoder_push(proto_encoder_state_t* p, uint8_t byte) {
+void proto_encoder_encode(proto_encoder_state_t* p, uint8_t byte, bool pad) {
     p->checksum += (p->byte_counter++ ^ byte);
     p->out(((p->active_byte & mask(p->bit_counter)) | (byte << p->bit_counter)) << 1);
     p->active_byte = byte >> (7 - p->bit_counter);
     p->bit_counter = (1 + p->bit_counter) % 7;
-    if (p->bit_counter == 0) {
+    if (pad && p->bit_counter == 0) {
         p->out(p->active_byte << 1);
     }
+}
+
+void proto_encoder_push(proto_encoder_state_t* p, uint8_t byte) {
+    proto_encoder_encode(p, byte, true);
 }
 
 void proto_encoder_push_sync(proto_encoder_state_t* p, uint8_t byte) {
@@ -153,7 +157,7 @@ void proto_encoder_end_sync(proto_encoder_state_t* p) {
 void proto_encoder_end(proto_encoder_state_t* p) {
     uint8_t checksum = p->checksum;
     if (p->bit_counter != 0) {
-        proto_encoder_push(p, 0);
+        proto_encoder_encode(p, 0, p->bit_counter != 6);
     }
     p->out(0x1 | (checksum << 1));
     proto_encoder_zero(p);
