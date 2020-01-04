@@ -2,6 +2,7 @@ package stupidproto
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"testing"
 
@@ -71,6 +72,151 @@ func TestEncodeDecode_fuzz_long(t *testing.T) {
 		f := fuzz.New().NumElements(0, 200)
 		f.Fuzz(&msgs)
 		twoWay(t, msgs)
+	}
+}
+
+func TestCorrupt_single_within_data(t *testing.T) {
+	msgs := [][]byte{[]byte("foo")}
+	expected := [][]byte{[]byte{}}
+	corruptTest(t, msgs, expected, func(b []byte) {
+		corruptWithinDataToData(b, 0)
+	})
+}
+
+func TestCorrupt_single_within_end(t *testing.T) {
+	msgs := [][]byte{[]byte("foo")}
+	expected := [][]byte{[]byte{}, []byte{}}
+	corruptTest(t, msgs, expected, func(b []byte) {
+		corruptWithinDataToEnd(b, 0)
+	})
+}
+
+func TestCorrupt_fuzz_within_data(t *testing.T) {
+	for i := 0; i < 50; i++ {
+		var msgs [][]byte
+		f := fuzz.New().NumElements(1, 5)
+		f.Fuzz(&msgs)
+
+		if len(msgs) == 0 {
+			continue
+		}
+
+		idx := rand.Intn(len(msgs))
+		if len(msgs[idx]) == 0 {
+			continue
+		}
+
+		expected := copyMsgs(msgs)
+		expected[idx] = nil
+
+		corruptTest(t, msgs, expected, func(b []byte) {
+			corruptWithinDataToData(b, idx)
+		})
+	}
+}
+
+func TestCorrupt_fuzz_within_end(t *testing.T) {
+	for i := 0; i < 50; i++ {
+		var msgs [][]byte
+		f := fuzz.New().NumElements(1, 100)
+		f.Fuzz(&msgs)
+
+		if len(msgs) == 0 {
+			continue
+		}
+
+		idx := rand.Intn(len(msgs))
+		if len(msgs[idx]) == 0 {
+			continue
+		}
+
+		expected := copyMsgs(msgs)
+		expected[idx] = nil
+		expected = append(expected[:idx], append([][]byte{nil}, expected[idx:]...)...)
+
+		corruptTest(t, msgs, expected, func(b []byte) {
+			corruptWithinDataToEnd(b, idx)
+		})
+	}
+}
+
+func TestCorrupt_fuzz_endbit(t *testing.T) {
+	for i := 0; i < 50; i++ {
+		var msgs [][]byte
+		f := fuzz.New().NumElements(1, 5)
+		f.Fuzz(&msgs)
+
+		if len(msgs) < 3 {
+			continue
+		}
+		idx := rand.Intn(len(msgs) - 1)
+		expected := copyMsgs(msgs)
+		expected[idx] = nil
+		expected = append(expected[:idx+1], expected[idx+2:]...)
+
+		corruptTest(t, msgs, expected, func(b []byte) {
+			corruptEndBit(b, idx)
+		})
+	}
+}
+
+func corruptEndBit(data []byte, msgNo int) {
+	_, end := bounds(data, msgNo)
+	data[end] &= (^byte(1))
+}
+
+func corruptWithinDataToData(data []byte, msgNo int) {
+	start, end := bounds(data, msgNo)
+	n := start + rand.Intn(end-start-1)
+	old := data[n]
+	data[n] += byte(rand.Intn(127) * 2 + 2)
+	if data[n] == old {
+		panic("could not corrupt")
+	}
+}
+
+func corruptWithinDataToEnd(data []byte, msgNo int) {
+	start, end := bounds(data, msgNo)
+	n := start + rand.Intn(end-start-1)
+	old := data[n]
+	data[n] += byte(rand.Intn(126)*2 + 1)
+	if data[n] == old {
+		panic("could not corrupt")
+	}
+}
+
+func bounds(data []byte, msgNo int) (int, int) {
+	var i int
+	var end int
+	var start int
+	end = -1
+	for j := 0; j <= msgNo; i++ {
+		if data[i]%2 == 1 {
+			if end >= 0 {
+				start = end + 1
+			}
+			end = i
+			j++
+		}
+	}
+
+	return start, end
+}
+
+func corruptTest(t *testing.T, msgs [][]byte, expected [][]byte, corrupter func([]byte)) {
+	encoded := EncodeMessages(msgs)
+	corrupted := copyBytes(encoded)
+	corrupter(corrupted)
+	result := DecodeMessages(corrupted)
+
+	if !compare(expected, result) {
+		t.Fatalf("decoded corrupted data differs from expected:\nbefore: %s\nencoded: %s\ncorrupted: %s\nafter: %s\nexpected: %s\n",
+			showMsgs(msgs),
+			showBytes(encoded),
+			showBytes(corrupted),
+			showMsgs(result),
+			showMsgs(expected),
+		)
 	}
 }
 
@@ -144,4 +290,22 @@ func showMsgs(msgs [][]byte) string {
 		strs[i] = showBytes(msg)
 	}
 	return fmt.Sprintf("{%s}", strings.Join(strs, " "))
+}
+
+func copyBytes(xs []byte) []byte {
+	rs := make([]byte, len(xs))
+	for i, x := range xs {
+		rs[i] = x
+	}
+
+	return rs
+}
+
+func copyMsgs(msgs [][]byte) [][]byte {
+	rs := make([][]byte, len(msgs))
+	for i, msg := range msgs {
+		rs[i] = copyBytes(msg)
+	}
+
+	return rs
 }
