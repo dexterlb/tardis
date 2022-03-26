@@ -1,6 +1,6 @@
 package stupidproto
 
-// #cgo CFLAGS: -g -Wall -Wno-unused-variable
+// #cgo CFLAGS: -g -Wall -Wno-unused-variable -Werror
 /*
 #include "proto.h"
 */
@@ -27,9 +27,9 @@ func ByteEncoder(in <-chan EncodeChunk, out chan<- byte) {
 	C.proto_encoder_init_sync(&enc, &sync)
 	for c := range in {
 		if c.End {
-			C.proto_encoder_end_sync(&enc)
+			C.proto_encoder_end(&enc)
 		} else {
-			C.proto_encoder_push_sync(&enc, C.uchar(c.Data))
+			C.proto_encoder_push(&enc, C.uchar(c.Data))
 		}
 
 		for C.proto_sync_pop(&sync, &b) {
@@ -45,7 +45,7 @@ func ByteDecoder(in <-chan byte, out chan<- DecodeChunk) {
 
 	C.proto_decoder_init_sync(&dec, &sync)
 	for b := range in {
-		C.proto_decoder_push_sync(&dec, C.uchar(b))
+		C.proto_decoder_push(&dec, C.uchar(b))
 
 		var cb C.uchar
 		for C.proto_sync_pop(&sync, &cb) {
@@ -64,6 +64,8 @@ func ByteDecoder(in <-chan byte, out chan<- DecodeChunk) {
 				End: true,
 			}
 		}
+
+		C.proto_sync_clear(&sync)
 	}
 }
 

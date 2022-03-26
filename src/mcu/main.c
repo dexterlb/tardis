@@ -4,28 +4,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#include "simple_uart.h"
 #include "bit_operations.h"
-
-ISR(USART_RX_vect) {
-    char x = uart_read_byte();
-
-    if (x == 'a') {
-        setbitval(PORTB, 1, bitclear(PORTB, 1));
-    }
-    if (x == 's') {
-        setbitval(PORTB, 2, bitclear(PORTB, 2));
-    }
-    if (x == 'd') {
-        setbitval(PORTB, 0, bitclear(PORTB, 0));
-    }
-    if (x == 'f') {
-        setbitval(PORTB, 3, bitclear(PORTB, 3));
-    }
-    char bla[] = "[.]";
-    bla[1] = x;
-    uart_write_string(bla);
-}
+#include "communication.h"
 
 const uint16_t pwm_top = 0xffff;
 
@@ -45,14 +25,25 @@ static inline void timer1_init(void) {
     OCR1A = 0xfffe;
 }
 
+typedef struct {
+    uint8_t selmask;
+    uint16_t pwm;
+    uint8_t speed;
+} msg_t;
+
+void process_message(uint8_t* msg, uint8_t n) {
+    char bla[] = "[.]";
+    bla[1] = msg[0];
+    communication_send((uint8_t*)bla, 3);
+}
+
 static inline void init(void)
 {
     DDRB = DDRB_STATE;
     DDRD = DDRD_STATE;
 
     timer1_init();
-    uart_init();
-    uart_enable_interrupt();
+    communication_init(process_message);
 	sei();
 }
 
