@@ -1,3 +1,0 @@
-[submodule "run/Digital-Ocean-Dynamic-DNS-Updater"]
-	path = run/Digital-Ocean-Dynamic-DNS-Updater
-	url = git@github.com:bensquire/Digital-Ocean-Dynamic-DNS-Updater.git
