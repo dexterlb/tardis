@@ -1,27 +1,10 @@
     pi_01           3v3                     digital_3v3
+    pi_11                       GPIO17      digital_pwm(1)
+    pi_16                       GPIO23      digital_ledsel_1 (2)
+    pi_13                       GPIO27      digital_ledsel_2 (3)
+    pi_15                       GPIO22      digital_ampsel (4)
     pi_03           SDA0        GPIO2       digital_rtc_sda (6)
     pi_05           SCL0        GPIO3       digital_rtc_scl (7)
-n   pi_08           TX          GPIO14      mcu_rx_miso (3)
-n   pi_10           RX          GPIO15      mcu_tx_sck (4)
-o   pi_08           TX          GPIO14      mcu_rx_extra_1
-o   pi_10           RX          GPIO15      mcu_tx_extra_3
-o   pi_11                       GPIO17      mcu_miso (3)
-o   pi_15                       GPIO22      mcu_sck (4)
-    pi_16                       GPIO23      mcu_mosi (2)
-    pi_18                       GPIO24      mcu_reset (1)
-
-
-    mcu_control_2               PB0         digital_ampsel (4)
-    mcu_control_3               PB1         digital_ledsel_2 (3)
-    mcu_control_4   OC0A        PB2         digital_ledsel_1 (2)
-    mcu_control_5   OC1A        PB3         digital_pwm (1)
-n   mcu_extra_1                 PD2         digital_adc_/cs (1)
-n   mcu_extra_3                 PD3         digital_adc_dout (2)
-n   mcu_extra_5                 PD4         digital_adc_clk (3)
-o   mcu_extra_5                 PD2         digital_adc_/cs (1)
-o   mcu_extra_7                 PD3         digital_adc_dout (2)
-o   mcu_extra_9                 PD4         digital_adc_clk (3)
-
-comments:
-    - the ADC is MCP3001
-    - "n" means the new mcu PCB. "o" means the old one.
+    pi_18                       GPIO24      digital_adc_/cs (1)
+    pi_21           MISO0       GPIO9       digital_adc_dout (2)
+    pi_13           SCK0        GPIO11      digital_adc_clk (3)
